@@ -5,6 +5,7 @@
 @layer base {
   body {
     @apply h-screen w-screen overflow-hidden text-black;
+    font-family: Tahoma, "MS Sans Serif", "Segoe UI", sans-serif;
     background: linear-gradient(180deg, #F9D1D1 0%, #C3B1E1 100%);
   }
 }
@@ -12,25 +13,28 @@
 @layer components {
   .win-border {
     border: 2px solid;
-    border-color: #ffffff #808080 #808080 #ffffff;
+    border-color: #f6f6f6 #5f5f5f #5f5f5f #f6f6f6;
     background-color: #c0c0c0;
+    box-shadow: 0 0 0 1px #9b9b9b, 1px 1px 0 #fdfdfd inset, -1px -1px 0 #7f7f7f inset;
   }
 
   .win-border-inset {
-    border: 1.5px solid;
-    border-color: #808080 #ffffff #ffffff #808080;
+    border: 2px solid;
+    border-color: #5f5f5f #f8f8f8 #f8f8f8 #5f5f5f;
     background-color: #ffffff;
+    box-shadow: inset 1px 1px 0 #9a9a9a;
   }
 
   .win-button {
-    @apply flex items-center justify-center p-1 win-border active:border-inset;
-    box-shadow: inset 1px 1px #dfdfdf;
+    @apply flex items-center justify-center p-1 win-border active:border-inset text-[10px] font-bold;
+    box-shadow: inset 1px 1px #efefef;
   }
 
   .win-title-bar {
     @apply flex items-center justify-between px-2 py-1 select-none cursor-default;
-    background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+    background: linear-gradient(90deg, #0c2268 0%, #1768d1 100%);
     color: white;
+    border-bottom: 2px solid #5f5f5f;
   }
 
   .win-taskbar {
@@ -38,13 +42,48 @@
   }
 
   .win-text {
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
+    font-family: Tahoma, "MS Sans Serif", "Segoe UI", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
   }
 
   .desktop-icon {
-    @apply flex flex-col items-center justify-center w-24 p-2 rounded-sm cursor-pointer hover:bg-white/20 active:bg-white/40;
+    @apply flex flex-col items-center justify-center w-24 p-2 rounded-sm cursor-pointer hover:bg-white/25 active:bg-white/40;
+  }
+
+  .win-control-btn {
+    @apply w-6 h-5 win-border flex items-center justify-center text-white;
+    box-shadow: inset 1px 1px #f0f0f0;
+  }
+
+  .win-control-min {
+    background: linear-gradient(180deg, #526e9f, #365281);
+  }
+
+  .win-control-max {
+    background: linear-gradient(180deg, #4f6ba0, #334f80);
+  }
+
+  .win-control-close {
+    background: linear-gradient(180deg, #d65151, #b62d2d);
+  }
+
+  .win-input {
+    border: 2px solid;
+    border-color: #606060 #ffffff #ffffff #606060;
+    background-color: #ffffff;
+    box-shadow: inset 1px 1px 0 #999999;
+  }
+
+  .win-input:focus {
+    border-color: #365da4 #e8f0ff #e8f0ff #365da4;
+    box-shadow: inset 1px 1px 0 #7a90b6;
+  }
+
+  .win-field-section {
+    border-bottom: 1px solid #a6a6a6;
+    padding-bottom: 10px;
   }
 }
 

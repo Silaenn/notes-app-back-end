@@ -8,20 +8,11 @@ import {
   FileText, 
   Folder, 
   Music, 
-  MessageCircle, 
-  ShoppingBag, 
-  Star,
   Clock,
-  Instagram,
-  Disc,
   Play,
   Pause,
-  SkipForward,
-  SkipBack,
-  Plus,
   Trash2,
-  Save,
-  Tag as TagIcon
+  Save
 } from 'lucide-react';
 
 const Window = ({ title, children, onClose, onMinimize, className, width = 400, height = 300, icon: Icon, zIndex = 10 }) => (
@@ -40,9 +31,9 @@ const Window = ({ title, children, onClose, onMinimize, className, width = 400, 
         <span className="win-text truncate">{title}</span>
       </div>
       <div className="flex gap-0.5">
-        <button className="win-button w-5 h-4 text-[8px]" onClick={onMinimize}><Minus className="w-2.5 h-2.5" /></button>
-        <button className="win-button w-5 h-4 text-[8px]"><Square className="w-2.5 h-2.5" /></button>
-        <button className="win-button w-5 h-4 text-[8px] bg-red-500/20" onClick={onClose}><X className="w-2.5 h-2.5" /></button>
+        <button className="win-control-btn win-control-min" onClick={onMinimize} aria-label="Minimize window"><Minus className="w-2.5 h-2.5" /></button>
+        <button className="win-control-btn win-control-max" aria-label="Maximize window"><Square className="w-2.5 h-2.5" /></button>
+        <button className="win-control-btn win-control-close" onClick={onClose} aria-label="Close window"><X className="w-2.5 h-2.5" /></button>
       </div>
     </div>
     <div className="flex-1 overflow-auto bg-white win-border-inset m-1 p-1">
@@ -102,7 +93,7 @@ const StaticSticker = ({ src, x, y, rotate = 0, size = 200, blend = 'screen' }) 
       width: `${size}px`,
       mixBlendMode: blend,
       filter: blend === 'multiply' ? 'contrast(1.4) brightness(1.1) saturate(1.2)' : 'none',
-      opacity: blend === 'multiply' ? 1 : 0.9 // Higher opacity for multiply to fight background tint
+      opacity: blend === 'multiply' ? 0.9 : 0.72
     }} 
     alt="Y2K Sticker"
   />
@@ -176,20 +167,20 @@ export default function App() {
       <Taskbar />
 
       {/* Asset Stickers */}
-      <StaticSticker src="/hati.png" x="80%" y="22%" rotate={15} size={220} />
-      <StaticSticker src="/kupu-kupu.png" x="22%" y="75%" rotate={-10} size={280} />
-      <StaticSticker src="/alien.png" x="12%" y="45%" rotate={-5} size={140} />
-      <StaticSticker src="/bintang.png" x="88%" y="78%" rotate={20} size={260} />
-      <StaticSticker src="/kaset.png" x="52%" y="88%" rotate={8} size={200} />
+      <StaticSticker src="/hati.png" x="79%" y="18%" rotate={12} size={200} />
+      <StaticSticker src="/kupu-kupu.png" x="17%" y="76%" rotate={-14} size={250} />
+      <StaticSticker src="/alien.png" x="90%" y="56%" rotate={-6} size={126} />
+      <StaticSticker src="/bintang.png" x="83%" y="84%" rotate={16} size={220} />
+      <StaticSticker src="/kaset.png" x="54%" y="90%" rotate={7} size={170} />
 
       {/* Desktop Icons */}
       <div className="absolute top-12 left-4 grid grid-cols-1 gap-6 z-10">
         <DesktopIcon icon={Folder} label="My Notes" color="#ffd700" onClick={() => setWindows(p => ({...p, explorer: true}))} />
-        <DesktopIcon icon={Plus} label="New Note" color="#25d366" onClick={() => {
+        <DesktopIcon icon={FileText} label="New Note" color="#169b62" onClick={() => {
           setActiveNote({ title: '', body: '', tags: [] });
           setWindows(p => ({...p, editor: true}));
         }} />
-        <DesktopIcon icon={Disc} label="Winamp" color="#4169e1" onClick={() => setWindows(p => ({...p, winamp: true}))} />
+        <DesktopIcon icon={Music} label="Winamp" color="#2f6df6" onClick={() => setWindows(p => ({...p, winamp: true}))} />
       </div>
 
       <AnimatePresence>
@@ -285,32 +276,32 @@ export default function App() {
             zIndex={30}
           >
             <form onSubmit={handleSave} className="flex flex-col h-full p-4 space-y-4">
-              <div className="space-y-1">
+              <div className="win-field-section space-y-1">
                 <label className="text-[10px] font-black uppercase text-gray-400">Title</label>
                 <input 
                   type="text" 
                   required
-                  className="w-full win-border-inset px-2 py-1 text-sm outline-none focus:border-blue-500"
+                  className="w-full win-input px-2 py-1 text-sm outline-none"
                   value={activeNote.title}
                   onChange={(e) => setActiveNote({...activeNote, title: e.target.value})}
                 />
               </div>
 
-              <div className="space-y-1">
+              <div className="win-field-section space-y-1">
                 <label className="text-[10px] font-black uppercase text-gray-400">Tags (comma separated)</label>
                 <input 
                   type="text" 
-                  className="w-full win-border-inset px-2 py-1 text-sm outline-none"
+                  className="w-full win-input px-2 py-1 text-sm outline-none"
                   value={Array.isArray(activeNote.tags) ? activeNote.tags.join(', ') : activeNote.tags}
                   onChange={(e) => setActiveNote({...activeNote, tags: e.target.value})}
                 />
               </div>
 
-              <div className="flex-1 flex flex-col space-y-1">
+              <div className="win-field-section flex-1 flex flex-col space-y-1">
                 <label className="text-[10px] font-black uppercase text-gray-400">Content</label>
                 <textarea 
                   required
-                  className="flex-1 w-full win-border-inset p-2 text-sm outline-none resize-none font-mono italic"
+                  className="flex-1 w-full win-input p-2 text-sm outline-none resize-none font-mono italic"
                   value={activeNote.body}
                   onChange={(e) => setActiveNote({...activeNote, body: e.target.value})}
                 />
