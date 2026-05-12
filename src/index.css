@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply h-screen w-screen overflow-hidden text-black;
+    background: linear-gradient(180deg, #F9D1D1 0%, #C3B1E1 100%);
+  }
+}
+
+@layer components {
+  .win-border {
+    border: 2px solid;
+    border-color: #ffffff #808080 #808080 #ffffff;
+    background-color: #c0c0c0;
+  }
+
+  .win-border-inset {
+    border: 1.5px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+    background-color: #ffffff;
+  }
+
+  .win-button {
+    @apply flex items-center justify-center p-1 win-border active:border-inset;
+    box-shadow: inset 1px 1px #dfdfdf;
+  }
+
+  .win-title-bar {
+    @apply flex items-center justify-between px-2 py-1 select-none cursor-default;
+    background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+    color: white;
+  }
+
+  .win-taskbar {
+    @apply fixed top-0 left-0 right-0 h-9 win-border z-50 flex items-center justify-between px-2;
+  }
+
+  .win-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .desktop-icon {
+    @apply flex flex-col items-center justify-center w-24 p-2 rounded-sm cursor-pointer hover:bg-white/20 active:bg-white/40;
+  }
+}
+
+.active\:border-inset:active {
+  border-color: #808080 #ffffff #ffffff #808080 !important;
+}

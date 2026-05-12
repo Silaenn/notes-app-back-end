@@ -1,7 +1,7 @@
-const { nanoid } = require("nanoid");
-const notes = require("./notes");
+import { nanoid } from "nanoid";
+import notes from "./notes.js";
 
-const addNoteHandler = (request, h) => {
+export const addNoteHandler = (request, h) => {
   const { title, tags, body } = request.payload;
 
   const id = nanoid(16);
@@ -41,14 +41,14 @@ const addNoteHandler = (request, h) => {
   return response;
 };
 
-const getAllNotesHandler = () => ({
+export const getAllNotesHandler = () => ({
   status: "success",
   data: {
     notes,
   },
 });
 
-const getNoteByIdHandler = (request, h) => {
+export const getNoteByIdHandler = (request, h) => {
   const { id } = request.params;
 
   const note = notes.filter((n) => n.id === id)[0];
@@ -70,7 +70,7 @@ const getNoteByIdHandler = (request, h) => {
   return response;
 };
 
-const editNoteByIdHandler = (request, h) => {
+export const editNoteByIdHandler = (request, h) => {
   const { id } = request.params;
 
   const { title, tags, body } = request.payload;
@@ -103,7 +103,7 @@ const editNoteByIdHandler = (request, h) => {
   return response;
 };
 
-const deleteNoteByIdHandler = (request, h) => {
+export const deleteNoteByIdHandler = (request, h) => {
   const { id } = request.params;
 
   const index = notes.findIndex((note) => note.id === id);
@@ -124,12 +124,4 @@ const deleteNoteByIdHandler = (request, h) => {
   });
   response.code(404);
   return response;
-};
-
-module.exports = {
-  addNoteHandler,
-  getAllNotesHandler,
-  getNoteByIdHandler,
-  editNoteByIdHandler,
-  deleteNoteByIdHandler,
 };
