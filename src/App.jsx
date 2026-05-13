@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 import { 
   X, 
   Minus, 
@@ -16,37 +16,43 @@ import {
   Volume2
 } from 'lucide-react';
 
-const Window = ({ title, children, onClose, onMinimize, className, contentClassName = "bg-white", width = 400, height = 300, icon: Icon, zIndex = 10 }) => (
-  <motion.div 
-    drag
-    dragMomentum={false}
-    dragListener={true}
-    dragControls={undefined}
-    initial={{ scale: 0.9, opacity: 0 }}
-    animate={{ scale: 1, opacity: 1 }}
-    exit={{ scale: 0.9, opacity: 0 }}
-    style={{ width, height, zIndex }}
-    className={`win-border absolute shadow-2xl overflow-hidden flex flex-col ${className}`}
-  >
-    <div className="win-title-bar drag-handle cursor-default">
-      <div className="flex items-center gap-2 pointer-events-none">
-        {Icon && <Icon className="w-3.5 h-3.5" />}
-        <span className="win-text truncate">{title}</span>
-      </div>
-      <div className="flex gap-0.5">
-        <button className="win-control-btn win-control-min" onClick={onMinimize} aria-label="Minimize window"><Minus className="w-2.5 h-2.5" /></button>
-        <button className="win-control-btn win-control-max" aria-label="Maximize window"><Square className="w-2.5 h-2.5" /></button>
-        <button className="win-control-btn win-control-close" onClick={onClose} aria-label="Close window"><X className="w-2.5 h-2.5" /></button>
-      </div>
-    </div>
-    <div 
-      className={`flex-1 overflow-auto win-border-inset m-1 p-1 ${contentClassName}`}
-      onPointerDown={(e) => e.stopPropagation()}
+const Window = ({ title, children, onClose, onMinimize, className, contentClassName = "bg-white", width = 400, height = 300, icon: Icon, zIndex = 10 }) => {
+  const controls = useDragControls();
+
+  return (
+    <motion.div 
+      drag
+      dragMomentum={false}
+      dragListener={false}
+      dragControls={controls}
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.9, opacity: 0 }}
+      style={{ width, height, zIndex }}
+      className={`win-border absolute shadow-2xl overflow-hidden flex flex-col ${className}`}
     >
-      {children}
-    </div>
-  </motion.div>
-);
+      <div 
+        className="win-title-bar drag-handle cursor-default"
+        onPointerDown={(e) => controls.start(e)}
+      >
+        <div className="flex items-center gap-2 pointer-events-none">
+          {Icon && <Icon className="w-3.5 h-3.5" />}
+          <span className="win-text truncate">{title}</span>
+        </div>
+        <div className="flex gap-0.5">
+          <button className="win-control-btn win-control-min" onClick={onMinimize} aria-label="Minimize window"><Minus className="w-2.5 h-2.5" /></button>
+          <button className="win-control-btn win-control-max" aria-label="Maximize window"><Square className="w-2.5 h-2.5" /></button>
+          <button className="win-control-btn win-control-close" onClick={onClose} aria-label="Close window"><X className="w-2.5 h-2.5" /></button>
+        </div>
+      </div>
+      <div 
+        className={`flex-1 overflow-auto win-border-inset m-1 p-1 ${contentClassName}`}
+      >
+        {children}
+      </div>
+    </motion.div>
+  );
+};
 
 const Taskbar = () => {
   const [time, setTime] = useState(new Date());
