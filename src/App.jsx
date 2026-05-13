@@ -29,7 +29,7 @@ const Window = ({ title, children, onClose, onMinimize, className, contentClassN
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0.9, opacity: 0 }}
       style={{ width, height, zIndex }}
-      className={`win-border absolute shadow-2xl overflow-hidden flex flex-col ${className}`}
+      className={`win-border absolute flex flex-col ${className}`}
     >
       <div 
         className="win-title-bar drag-handle cursor-default"
@@ -68,17 +68,26 @@ const Taskbar = () => {
   return (
     <div className="win-taskbar">
       <div className="flex items-center gap-4">
-        <div className="win-text text-blue-800 italic pr-4 border-r border-gray-400">CyberNote_OS</div>
-        <div className="flex gap-4">
-          {['System', 'View', 'Tools', 'Help'].map((item) => (
-            <button key={item} className="win-text hover:text-blue-800">{item}</button>
+        <button className="win-button px-4 bg-yellow-400 text-black border-2 border-black shadow-none active:translate-y-0.5">
+          VIRTUA_CORE
+        </button>
+        <div className="hidden md:flex gap-4">
+          {['SYS', 'MEM', 'RAD', 'HLP'].map((item) => (
+            <button key={item} className="win-text hover:text-yellow-600 uppercase font-black">{item}</button>
           ))}
         </div>
       </div>
+      
+      <div className="marquee-container hidden lg:block">
+        <div className="marquee-text">
+          WELCOME TO VIRTUA_CORE v2.0 // SYSTEM STATUS: OPTIMAL // ENJOY THE RADICAL VIBES // NOSTALGIA OVERLOAD DETECTED // 
+        </div>
+      </div>
+
       <div className="flex items-center gap-4">
-        <div className="win-border-inset px-2 py-0.5 flex items-center gap-2 win-text bg-[#C0C0C0]/50">
-          <Clock className="w-3 h-3" />
-          {formatTime(time)} - {formatDate(time)}
+        <div className="win-border px-2 py-0.5 flex items-center gap-2 win-text bg-black text-yellow-400 border-2 border-black shadow-none">
+          <Clock className="w-4 h-4" />
+          {formatTime(time)}
         </div>
       </div>
     </div>
@@ -87,10 +96,10 @@ const Taskbar = () => {
 
 const DesktopIcon = ({ icon: Icon, label, color, onClick }) => (
   <div className="desktop-icon group" onClick={onClick}>
-    <div className={`p-3 rounded-lg bg-white/40 win-border group-hover:bg-white/60 transition-colors`}>
-      <Icon className="w-8 h-8" style={{ color }} />
+    <div className={`p-4 win-border bg-white group-hover:bg-yellow-400 transition-colors border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
+      <Icon className="w-10 h-10" style={{ color: '#000' }} />
     </div>
-    <span className="win-text mt-1 px-1 bg-white/20 rounded shadow-sm text-center line-clamp-1">{label}</span>
+    <span className="win-text mt-2 px-2 bg-yellow-400 text-black font-black uppercase border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">{label}</span>
   </div>
 );
 
@@ -239,7 +248,7 @@ export default function App() {
   );
 
   return (
-    <div className="h-screen w-screen relative pt-9 overflow-hidden">
+    <div className="h-screen w-screen relative pb-12 overflow-hidden">
       <Taskbar />
 
       {/* Persisted Audio Element */}
@@ -253,13 +262,13 @@ export default function App() {
       <StaticSticker src="/kaset.png" x="30%" y="30%" rotate={-10} size={170} />
 
       {/* Desktop Icons */}
-      <div className="absolute top-12 left-4 grid grid-cols-1 gap-6 z-10">
-        <DesktopIcon icon={Folder} label="My Notes" color="#ffd700" onClick={() => setWindows(p => ({...p, explorer: true}))} />
-        <DesktopIcon icon={FileText} label="New Note" color="#169b62" onClick={() => {
+      <div className="absolute top-8 left-8 grid grid-cols-1 gap-12 z-10">
+        <DesktopIcon icon={Folder} label="MY_NOTES" color="#ffd700" onClick={() => setWindows(p => ({...p, explorer: true}))} />
+        <DesktopIcon icon={FileText} label="NEW_NOTE" color="#169b62" onClick={() => {
           setActiveNote({ title: '', body: '', tags: [] });
           setWindows(p => ({...p, editor: true}));
         }} />
-        <DesktopIcon icon={Music} label="Winamp" color="#2f6df6" onClick={() => setWindows(p => ({...p, winamp: true}))} />
+        <DesktopIcon icon={Music} label="WINAMP" color="#2f6df6" onClick={() => setWindows(p => ({...p, winamp: true}))} />
       </div>
 
       <AnimatePresence>
@@ -275,19 +284,19 @@ export default function App() {
             zIndex={20}
           >
             <div className="flex h-full flex-col">
-              <div className="p-2 border-b bg-gray-50 flex gap-2">
+              <div className="p-2 border-b-2 border-black bg-gray-200 flex gap-2 items-stretch">
                 <div className="relative flex-1">
                   <input 
                     type="text" 
-                    placeholder="Search notes..." 
-                    className="w-full win-border-inset px-6 py-1 text-xs outline-none" 
+                    placeholder="SEARCH_DB..." 
+                    className="w-full h-full win-input px-8 py-2 text-lg outline-none" 
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
-                  <Search className="absolute left-1.5 top-1.5 w-3 h-3 text-gray-400" />
+                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-black" />
                 </div>
                 <button 
-                  className="win-button px-3 text-[10px] font-bold"
+                  className="win-button px-6 text-xs font-black bg-yellow-400"
                   onClick={() => {
                     setActiveNote({ title: '', body: '', tags: [] });
                     setWindows(p => ({...p, editor: true}));
@@ -299,40 +308,40 @@ export default function App() {
               
               <div className="flex-1 overflow-auto p-4">
                 {loading ? (
-                  <div className="flex items-center justify-center h-full text-xs animate-pulse">LOADING_DATA...</div>
+                  <div className="flex items-center justify-center h-full text-lg animate-pulse font-black">LOADING_DATA...</div>
                 ) : filteredNotes.length === 0 ? (
-                  <div className="flex items-center justify-center h-full text-xs text-gray-400 italic">NO_RECORDS_FOUND</div>
+                  <div className="flex items-center justify-center h-full text-lg text-gray-400 italic font-black">NO_RECORDS_FOUND</div>
                 ) : (
-                  <table className="w-full text-xs text-left">
-                    <thead className="bg-gray-100 sticky top-0">
+                  <table className="w-full text-base text-left border-collapse">
+                    <thead className="bg-yellow-400 sticky top-0 border-b-2 border-black">
                       <tr>
-                        <th className="p-2 border win-text uppercase">Title</th>
-                        <th className="p-2 border win-text uppercase">Tags</th>
-                        <th className="p-2 border win-text uppercase">Updated</th>
-                        <th className="p-2 border win-text uppercase w-16 text-center">Actions</th>
+                        <th className="p-3 border-2 border-black win-text uppercase text-lg">Title</th>
+                        <th className="p-3 border-2 border-black win-text uppercase text-lg">Tags</th>
+                        <th className="p-3 border-2 border-black win-text uppercase text-lg">Updated</th>
+                        <th className="p-3 border-2 border-black win-text uppercase text-lg w-20 text-center">Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredNotes.map(note => (
-                        <tr key={note.id} className="hover:bg-blue-50 cursor-pointer group" onClick={() => {
+                        <tr key={note.id} className="hover:bg-yellow-100 hover:translate-x-1 hover:-translate-y-1 transition-transform cursor-pointer group border-b-2 border-black bg-white" onClick={() => {
                           setActiveNote(note);
                           setWindows(p => ({...p, editor: true}));
                         }}>
-                          <td className="p-2 border font-bold text-blue-800">{note.title}</td>
-                          <td className="p-2 border">
-                            <div className="flex gap-1">
+                          <td className="p-3 border-r-2 border-black font-black text-black text-lg">{note.title}</td>
+                          <td className="p-3 border-r-2 border-black">
+                            <div className="flex flex-wrap gap-2">
                               {note.tags.map((t, i) => (
-                                <span key={i} className="px-1.5 py-0.5 bg-gray-200 rounded text-[9px] uppercase font-black">{t}</span>
+                                <span key={i} className="px-2 py-1 bg-pink-500 text-white border-2 border-black text-[10px] uppercase font-black">{t}</span>
                               ))}
                             </div>
                           </td>
-                          <td className="p-2 border text-gray-400 italic">{new Date(note.updatedAt).toLocaleDateString()}</td>
-                          <td className="p-2 border text-center">
+                          <td className="p-3 border-r-2 border-black text-gray-800 italic text-lg font-bold">{new Date(note.updatedAt).toLocaleDateString()}</td>
+                          <td className="p-3 text-center">
                             <button 
-                              className="p-1 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                              className="p-2 bg-red-500 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-600 active:shadow-none active:translate-x-0.5 active:translate-y-0.5"
                               onClick={(e) => { e.stopPropagation(); handleDelete(note.id); }}
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
+                              <Trash2 className="w-5 h-5 text-white" />
                             </button>
                           </td>
                         </tr>
@@ -348,59 +357,60 @@ export default function App() {
         {windows.editor && activeNote && (
           <Window 
             key="editor"
-            title={activeNote.id ? `Editing: ${activeNote.title}` : 'Create New Note'} 
+            title={activeNote.id ? `EDIT: ${activeNote.title}` : 'CREATE_NEW_RECORD'} 
             icon={FileText} 
-            width={400} 
-            height={450} 
+            width={500} 
+            height={600} 
             onClose={() => setWindows(p => ({...p, editor: false}))}
-            className="left-1/2 top-24 z-[30]"
+            className="left-1/2 top-10 -translate-x-1/2 z-[30]"
             zIndex={30}
           >
-            <form onSubmit={handleSave} className="flex flex-col h-full p-4 space-y-4">
-              <div className="win-field-section space-y-1">
-                <label className="text-[10px] font-black uppercase text-gray-400">Title</label>
+            <form onSubmit={handleSave} className="flex flex-col h-full p-6 space-y-6">
+              <div className="win-field-section space-y-2">
+                <label className="text-sm font-black uppercase text-black">FILE_NAME</label>
                 <input 
                   type="text" 
                   required
-                  className="w-full win-input px-2 py-1 text-sm outline-none"
+                  className="w-full win-input px-3 py-2 text-xl outline-none font-black"
                   value={activeNote.title}
                   onChange={(e) => setActiveNote({...activeNote, title: e.target.value})}
                 />
               </div>
 
-              <div className="win-field-section space-y-1">
-                <label className="text-[10px] font-black uppercase text-gray-400">Tags (comma separated)</label>
+              <div className="win-field-section space-y-2">
+                <label className="text-sm font-black uppercase text-black">METADATA_TAGS</label>
                 <input 
                   type="text" 
-                  className="w-full win-input px-2 py-1 text-sm outline-none"
+                  className="w-full win-input px-3 py-2 text-xl outline-none font-black"
+                  placeholder="tag1, tag2..."
                   value={Array.isArray(activeNote.tags) ? activeNote.tags.join(', ') : activeNote.tags}
                   onChange={(e) => setActiveNote({...activeNote, tags: e.target.value})}
                 />
               </div>
 
-              <div className="win-field-section flex-1 flex flex-col space-y-1">
-                <label className="text-[10px] font-black uppercase text-gray-400">Content</label>
+              <div className="win-field-section flex-1 flex flex-col space-y-2">
+                <label className="text-sm font-black uppercase text-black">DATA_CONTENT</label>
                 <textarea 
                   required
-                  className="flex-1 w-full win-input p-2 text-sm outline-none resize-none font-mono italic"
+                  className="flex-1 w-full win-input p-3 text-xl outline-none resize-none font-bold italic"
                   value={activeNote.body}
                   onChange={(e) => setActiveNote({...activeNote, body: e.target.value})}
                 />
               </div>
 
-              <div className="flex gap-2 pt-2">
+              <div className="flex gap-4 pt-2">
                 <button 
                   type="submit" 
-                  className="flex-1 win-button bg-yellow-400 font-bold text-xs uppercase italic flex items-center justify-center gap-2"
+                  className="flex-1 win-button bg-yellow-400 font-black text-xs uppercase flex items-center justify-center gap-3 p-4"
                 >
-                  <Save className="w-3.5 h-3.5" /> SAVE_CHANGES
+                  <Save className="w-5 h-5" /> EXECUTE_SAVE.SH
                 </button>
                 <button 
                   type="button"
-                  className="win-button px-4 text-xs italic"
+                  className="win-button px-6 text-xs font-black bg-white"
                   onClick={() => setWindows(p => ({...p, editor: false}))}
                 >
-                  CANCEL
+                  ABORT
                 </button>
               </div>
             </form>
@@ -410,7 +420,7 @@ export default function App() {
         {windows.winamp && (
           <Window 
             key="winamp" 
-            title="Winamp v2.64" 
+            title="Winamp" 
             icon={Music} 
             width={320} 
             height={240} 
