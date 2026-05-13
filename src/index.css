@@ -85,6 +85,26 @@
     border-bottom: 1px solid #a6a6a6;
     padding-bottom: 10px;
   }
+
+  .win-seek-bar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 8px;
+    height: 12px;
+    background: #c0c0c0;
+    border: 1px solid #000;
+    box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #888 inset;
+    cursor: pointer;
+  }
+
+  .win-seek-bar::-moz-range-thumb {
+    width: 8px;
+    height: 12px;
+    background: #c0c0c0;
+    border: 1px solid #000;
+    box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #888 inset;
+    cursor: pointer;
+  }
 }
 
 .active\:border-inset:active {

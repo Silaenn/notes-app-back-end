@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
@@ -12,21 +12,24 @@ import {
   Play,
   Pause,
   Trash2,
-  Save
+  Save,
+  Volume2
 } from 'lucide-react';
 
 const Window = ({ title, children, onClose, onMinimize, className, contentClassName = "bg-white", width = 400, height = 300, icon: Icon, zIndex = 10 }) => (
   <motion.div 
     drag
     dragMomentum={false}
+    dragListener={true}
+    dragControls={undefined}
     initial={{ scale: 0.9, opacity: 0 }}
     animate={{ scale: 1, opacity: 1 }}
     exit={{ scale: 0.9, opacity: 0 }}
     style={{ width, height, zIndex }}
     className={`win-border absolute shadow-2xl overflow-hidden flex flex-col ${className}`}
   >
-    <div className="win-title-bar drag-handle">
-      <div className="flex items-center gap-2">
+    <div className="win-title-bar drag-handle cursor-default">
+      <div className="flex items-center gap-2 pointer-events-none">
         {Icon && <Icon className="w-3.5 h-3.5" />}
         <span className="win-text truncate">{title}</span>
       </div>
@@ -36,7 +39,10 @@ const Window = ({ title, children, onClose, onMinimize, className, contentClassN
         <button className="win-control-btn win-control-close" onClick={onClose} aria-label="Close window"><X className="w-2.5 h-2.5" /></button>
       </div>
     </div>
-    <div className={`flex-1 overflow-auto win-border-inset m-1 p-1 ${contentClassName}`}>
+    <div 
+      className={`flex-1 overflow-auto win-border-inset m-1 p-1 ${contentClassName}`}
+      onPointerDown={(e) => e.stopPropagation()}
+    >
       {children}
     </div>
   </motion.div>
@@ -105,6 +111,70 @@ export default function App() {
   const [windows, setWindows] = useState({ explorer: true, editor: false, winamp: false });
   const [activeNote, setActiveNote] = useState(null);
   const [search, setSearch] = useState('');
+
+  // Music Player State
+  const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(0.7);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.volume = volume;
+
+    const updateTime = () => setCurrentTime(audio.currentTime);
+    const updateDuration = () => setDuration(audio.duration);
+    const handleEnd = () => {
+      audio.currentTime = 0;
+      audio.play();
+    };
+
+    audio.addEventListener('timeupdate', updateTime);
+    audio.addEventListener('loadedmetadata', updateDuration);
+    audio.addEventListener('ended', handleEnd);
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateTime);
+      audio.removeEventListener('loadedmetadata', updateDuration);
+      audio.removeEventListener('ended', handleEnd);
+    };
+  }, [windows.winamp, volume]);
+
+  const togglePlay = () => {
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleStop = () => {
+    audioRef.current.pause();
+    audioRef.current.currentTime = 0;
+    setIsPlaying(false);
+    setCurrentTime(0);
+  };
+
+  const handleSeek = (e) => {
+    const time = parseFloat(e.target.value);
+    audioRef.current.currentTime = time;
+    setCurrentTime(time);
+  };
+
+  const handleVolumeChange = (e) => {
+    const val = parseFloat(e.target.value);
+    setVolume(val);
+  };
+
+  const formatMusicTime = (time) => {
+    const mins = Math.floor(time / 60);
+    const secs = Math.floor(time % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const fetchNotes = async () => {
     try {
@@ -327,28 +397,110 @@ export default function App() {
         )}
 
         {windows.winamp && (
-          <Window title="Winamp" icon={Music} width={280} height={180} onClose={() => setWindows(p => ({...p, winamp: false}))} className="right-8 bottom-8" contentClassName="bg-[#0c2268]" zIndex={25}>
-            <div className="p-2 text-cyan-300 font-mono text-[10px] space-y-2 h-full flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="flex justify-between border-b border-cyan-300/20 pb-1">
-                  <span>00:42</span>
-                  <span className="truncate ml-2">CYBER_CORE.MP3</span>
+          <Window title="Winamp v2.64" icon={Music} width={320} height={240} onClose={() => setWindows(p => ({...p, winamp: false}))} className="right-8 bottom-8" contentClassName="bg-[#1a1a1a]" zIndex={25}>
+            <audio ref={audioRef} src="/nexus.mp3" />
+            <div className="p-0 flex flex-col h-full select-none no-drag">
+              {/* Main Display Area */}
+              <div className="bg-black m-1 p-2 border-2 border-[#333] shadow-[inset_0_0_10px_rgba(0,0,0,1)] flex gap-3 h-24">
+                {/* Visualizer & Info */}
+                <div className="flex-1 flex flex-col justify-between">
+                  <div className="flex justify-between items-start">
+                    <div className="flex flex-col">
+                      <span className="text-[7px] text-pink-500 font-black tracking-tighter uppercase leading-none mb-1">STEREOPHONIC</span>
+                      <span className="text-cyan-400 font-mono text-[10px] truncate w-32 shadow-[0_0_5px_rgba(34,211,238,0.3)]">Nexus.MP3</span>
+                    </div>
+                    <div className="text-right flex flex-col items-end">
+                      <span className="text-[7px] text-gray-500 font-bold uppercase leading-none">kbps/khz</span>
+                      <span className="text-[9px] text-cyan-500/80 font-mono">128/44.1</span>
+                    </div>
+                  </div>
+                  
+                  {/* Mock Oscilloscope */}
+                  <div className="flex-1 flex items-center gap-[1px] pt-1">
+                    {[...Array(24)].map((_, i) => (
+                      <motion.div 
+                        key={i}
+                        animate={{ height: isPlaying ? [2, Math.random() * 20 + 2, 2] : 2 }}
+                        transition={{ repeat: isPlaying ? Infinity : 0, duration: 0.2, delay: i * 0.02 }}
+                        className="flex-1 bg-cyan-500/40"
+                      />
+                    ))}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 h-1 bg-[#1768d1]/30">
-                    <div className="w-1/3 h-full bg-cyan-400 shadow-[0_0_5px_#22d3ee]"></div>
+
+                {/* Time Display */}
+                <div className="w-20 bg-[#001100] border border-[#003300] flex flex-col items-center justify-center p-1 rounded-sm shadow-[inset_0_0_8px_rgba(0,255,0,0.1)]">
+                  <span className="text-[7px] text-[#00ff00]/40 font-bold uppercase leading-none mb-1">TIME</span>
+                  <div className="text-xl font-mono text-[#00ff00] leading-none tracking-tighter drop-shadow-[0_0_3px_rgba(0,255,0,0.5)]">
+                    {formatMusicTime(currentTime)}
+                  </div>
+                  <div className="w-full mt-1 h-0.5 bg-[#002200]">
+                    <div 
+                      className="h-full bg-[#00ff00] shadow-[0_0_3px_#00ff00]" 
+                      style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }}
+                    />
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-3">
-                <div className="flex justify-center gap-4">
-                  <button className="win-button bg-[#c0c0c0] text-black w-8 h-8 flex items-center justify-center"><Play className="w-3.5 h-3.5 fill-black" /></button>
-                  <button className="win-button bg-[#c0c0c0] text-black w-8 h-8 flex items-center justify-center"><Pause className="w-3.5 h-3.5" /></button>
+
+              {/* Controls Section */}
+              <div className="flex-1 bg-[#c0c0c0] p-1 border-t border-[#f6f6f6] flex flex-col gap-2">
+                {/* Seek Bar */}
+                <div className="px-1">
+                  <input 
+                    type="range"
+                    min="0"
+                    max={duration || 100}
+                    step="0.1"
+                    value={currentTime}
+                    onChange={handleSeek}
+                    className="win-seek-bar w-full h-3 bg-black border border-[#555] appearance-none cursor-pointer"
+                  />
                 </div>
-                <div className="flex justify-between text-[8px] uppercase font-bold text-pink-400 tracking-wider">
-                  <span>*SHUFFLE</span>
-                  <span>REPEAT*</span>
+
+                {/* Buttons */}
+                <div className="flex justify-between items-center px-1">
+                  <div className="flex gap-1">
+                    <button onClick={togglePlay} className="win-button w-8 h-8 flex items-center justify-center active:bg-gray-400">
+                      {isPlaying ? <Pause className="w-4 h-4 fill-black" /> : <Play className="w-4 h-4 fill-black ml-0.5" />}
+                    </button>
+                    <button onClick={handleStop} className="win-button w-8 h-8 flex items-center justify-center active:bg-gray-400">
+                      <Square className="w-3 h-3 fill-black" />
+                    </button>
+                  </div>
+
+                  {/* Volume / EQ Area */}
+                  <div className="flex flex-col gap-1 items-end">
+                    <div className="flex items-center gap-2">
+                      <Volume2 className="w-3 h-3 text-blue-800" />
+                      <div className="w-20 h-3 bg-black border border-[#555] relative overflow-hidden group">
+                        <input 
+                          type="range"
+                          min="0"
+                          max="1"
+                          step="0.01"
+                          value={volume}
+                          onChange={handleVolumeChange}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 opacity-80" style={{ clipPath: `inset(0 ${100 - (volume * 100)}% 0 0)` }}></div>
+                        <div className="absolute inset-0 flex gap-[1px] pointer-events-none">
+                          {[...Array(10)].map((_, i) => <div key={i} className="flex-1 border-r border-black/30"></div>)}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 text-[8px] font-black text-gray-600 italic">
+                      <span className={isPlaying ? "text-blue-700 animate-pulse" : ""}>AUTO_EQ</span>
+                      <span className="text-pink-600">LOOP_ON</span>
+                    </div>
+                  </div>
                 </div>
+              </div>
+
+              {/* Bottom Status Bar */}
+              <div className="bg-[#0c2268] text-white text-[7px] px-2 py-0.5 flex justify-between font-bold italic border-t border-[#000]">
+                <span>CYBER_WAVE_OS_AUDIO_ENGINE</span>
+                <span className="animate-pulse">SAMPLED: OK</span>
               </div>
             </div>
           </Window>
