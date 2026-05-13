@@ -111,6 +111,7 @@ export default function App() {
   const [windows, setWindows] = useState({ explorer: true, editor: false, winamp: false });
   const [activeNote, setActiveNote] = useState(null);
   const [search, setSearch] = useState('');
+  const [barHeights, setBarHeights] = useState(() => Array(24).fill(2));
 
   // Music Player State
   const audioRef = useRef(null);
@@ -142,6 +143,17 @@ export default function App() {
       audio.removeEventListener('ended', handleEnd);
     };
   }, [windows.winamp, volume]);
+
+  useEffect(() => {
+    if (!isPlaying) {
+      setBarHeights(Array(24).fill(2));
+      return;
+    }
+    const interval = setInterval(() => {
+      setBarHeights(Array.from({ length: 24 }, () => Math.random() * 20 + 2));
+    }, 80);
+    return () => clearInterval(interval);
+  }, [isPlaying]);
 
   const togglePlay = () => {
     if (isPlaying) {
@@ -417,11 +429,11 @@ export default function App() {
                   
                   {/* Mock Oscilloscope */}
                   <div className="flex-1 flex items-center gap-[1px] pt-1">
-                    {[...Array(24)].map((_, i) => (
+                    {barHeights.map((h, i) => (
                       <motion.div 
                         key={i}
-                        animate={{ height: isPlaying ? [2, Math.random() * 20 + 2, 2] : 2 }}
-                        transition={{ repeat: isPlaying ? Infinity : 0, duration: 0.2, delay: i * 0.02 }}
+                        animate={{ height: h }}
+                        transition={{ duration: 0.08, ease: "easeOut" }}
                         className="flex-1 bg-cyan-500/40"
                       />
                     ))}
