@@ -169,7 +169,7 @@ export default function App() {
       {/* Asset Stickers */}
       <StaticSticker src="/hati.png" x="79%" y="18%" rotate={12} size={200} />
       <StaticSticker src="/kupu-kupu.png" x="17%" y="76%" rotate={-14} size={250} />
-      <StaticSticker src="/alien.png" x="60%" y="56%" rotate={20} size={180} />
+      <StaticSticker src="/alien.png" x="55%" y="56%" rotate={20} size={180} />
       <StaticSticker src="/bintang.png" x="83%" y="84%" rotate={16} size={220} />
       <StaticSticker src="/kaset.png" x="30%" y="30%" rotate={-10} size={170} />
 
@@ -354,10 +354,6 @@ export default function App() {
           </Window>
         )}
       </AnimatePresence>
-
-      <div className="fixed bottom-4 left-4 text-[10px] font-black text-white/30 uppercase tracking-[0.5em] pointer-events-none">
-        System: Connected // Mode: Production // v26.4
-      </div>
       
       {/* CRT Overlay Effect */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-[100] bg-[length:100%_2px,3px_100%]"></div>
