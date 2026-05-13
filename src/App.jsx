@@ -288,7 +288,7 @@ export default function App() {
             width={600} 
             height={400} 
             onClose={() => setWindows(p => ({...p, explorer: false}))}
-            className="left-32 top-16"
+            className="left-40 top-16"
             zIndex={20}
           >
             <div className="flex h-full flex-col">
