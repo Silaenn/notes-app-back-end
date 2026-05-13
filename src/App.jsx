@@ -18,6 +18,9 @@ import {
 
 const Window = ({ title, children, onClose, onMinimize, className, contentClassName = "bg-white", width = 400, height = 300, icon: Icon, zIndex = 10 }) => {
   const controls = useDragControls();
+  const [isMaximized, setIsMaximized] = useState(false);
+
+  const toggleMaximize = () => setIsMaximized(!isMaximized);
 
   return (
     <motion.div 
@@ -26,9 +29,14 @@ const Window = ({ title, children, onClose, onMinimize, className, contentClassN
       dragListener={false}
       dragControls={controls}
       initial={{ scale: 0.9, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
+      animate={{ 
+        scale: 1, 
+        opacity: 1,
+        width: isMaximized ? width * 1.2 : width,
+        height: isMaximized ? height * 1.2 : height,
+      }}
       exit={{ scale: 0.9, opacity: 0 }}
-      style={{ width, height, zIndex }}
+      style={{ zIndex }}
       className={`win-border absolute flex flex-col ${className}`}
     >
       <div 
@@ -39,10 +47,10 @@ const Window = ({ title, children, onClose, onMinimize, className, contentClassN
           {Icon && <Icon className="w-3.5 h-3.5" />}
           <span className="win-text truncate">{title}</span>
         </div>
-        <div className="flex gap-0.5">
-          <button className="win-control-btn win-control-min" onClick={onMinimize} aria-label="Minimize window"><Minus className="w-2.5 h-2.5" /></button>
-          <button className="win-control-btn win-control-max" aria-label="Maximize window"><Square className="w-2.5 h-2.5" /></button>
-          <button className="win-control-btn win-control-close" onClick={onClose} aria-label="Close window"><X className="w-2.5 h-2.5" /></button>
+        <div className="flex gap-1.5">
+          <button className="win-control-btn win-control-min" onClick={onMinimize} aria-label="Minimize window"><Minus className="w-3 h-3" /></button>
+          <button className="win-control-btn win-control-max" onClick={toggleMaximize} aria-label="Maximize window"><Square className="w-3 h-3" /></button>
+          <button className="win-control-btn win-control-close" onClick={onClose} aria-label="Close window"><X className="w-3 h-3" /></button>
         </div>
       </div>
       <div 
