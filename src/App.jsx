@@ -117,7 +117,6 @@ export default function App() {
   const [windows, setWindows] = useState({ explorer: true, editor: false, winamp: false });
   const [activeNote, setActiveNote] = useState(null);
   const [search, setSearch] = useState('');
-  const [barHeights, setBarHeights] = useState(() => Array(24).fill(2));
 
   // Music Player State
   const audioRef = useRef(null);
@@ -148,18 +147,7 @@ export default function App() {
       audio.removeEventListener('loadedmetadata', updateDuration);
       audio.removeEventListener('ended', handleEnd);
     };
-  }, [windows.winamp, volume]);
-
-  useEffect(() => {
-    if (!isPlaying) {
-      setBarHeights(Array(24).fill(2));
-      return;
-    }
-    const interval = setInterval(() => {
-      setBarHeights(Array.from({ length: 24 }, () => Math.random() * 20 + 2));
-    }, 80);
-    return () => clearInterval(interval);
-  }, [isPlaying]);
+  }, [volume]);
 
   const togglePlay = () => {
     if (isPlaying) {
@@ -254,6 +242,9 @@ export default function App() {
     <div className="h-screen w-screen relative pt-9 overflow-hidden">
       <Taskbar />
 
+      {/* Persisted Audio Element */}
+      <audio ref={audioRef} src="/nexus.mp3" />
+
       {/* Asset Stickers */}
       <StaticSticker src="/hati.png" x="79%" y="18%" rotate={12} size={200} />
       <StaticSticker src="/kupu-kupu.png" x="17%" y="76%" rotate={-14} size={250} />
@@ -274,6 +265,7 @@ export default function App() {
       <AnimatePresence>
         {windows.explorer && (
           <Window 
+            key="explorer"
             title="Note Explorer" 
             icon={Folder} 
             width={600} 
@@ -355,6 +347,7 @@ export default function App() {
 
         {windows.editor && activeNote && (
           <Window 
+            key="editor"
             title={activeNote.id ? `Editing: ${activeNote.title}` : 'Create New Note'} 
             icon={FileText} 
             width={400} 
@@ -415,8 +408,20 @@ export default function App() {
         )}
 
         {windows.winamp && (
-          <Window title="Winamp v2.64" icon={Music} width={320} height={240} onClose={() => setWindows(p => ({...p, winamp: false}))} className="right-8 bottom-8" contentClassName="bg-[#1a1a1a]" zIndex={25}>
-            <audio ref={audioRef} src="/nexus.mp3" />
+          <Window 
+            key="winamp" 
+            title="Winamp v2.64" 
+            icon={Music} 
+            width={320} 
+            height={240} 
+            onClose={() => {
+              handleStop();
+              setWindows(p => ({...p, winamp: false}));
+            }} 
+            className="right-8 bottom-8" 
+            contentClassName="bg-[#1a1a1a]" 
+            zIndex={25}
+          >
             <div className="p-0 flex flex-col h-full select-none no-drag">
               {/* Main Display Area */}
               <div className="bg-black m-1 p-2 border-2 border-[#333] shadow-[inset_0_0_10px_rgba(0,0,0,1)] flex gap-3 h-24">
@@ -434,13 +439,13 @@ export default function App() {
                   </div>
                   
                   {/* Mock Oscilloscope */}
-                  <div className="flex-1 flex items-center gap-[1px] pt-1">
-                    {barHeights.map((h, i) => (
+                  <div className="flex-1 flex items-end gap-[1px] pt-1 overflow-hidden w-full">
+                    {[...Array(50)].map((_, i) => (
                       <motion.div 
                         key={i}
-                        animate={{ height: h }}
-                        transition={{ duration: 0.08, ease: "easeOut" }}
-                        className="flex-1 bg-cyan-500/40"
+                        animate={{ height: isPlaying ? [2, Math.random() * 35 + 5, 2] : 2 }}
+                        transition={{ repeat: isPlaying ? Infinity : 0, duration: 0.2, delay: i * 0.005 }}
+                        className="flex-1 bg-cyan-500/70"
                       />
                     ))}
                   </div>
