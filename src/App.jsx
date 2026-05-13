@@ -76,19 +76,19 @@ const Taskbar = () => {
   return (
     <div className="win-taskbar">
       <div className="flex items-center gap-4">
-        <button className="win-button px-4 bg-yellow-400 text-black border-2 border-black shadow-none active:translate-y-0.5">
-          VIRTUA_CORE
+        <button className="win-button px-4 bg-yellow-400 text-black border-2 border-black shadow-none active:translate-y-0.5 hover:bg-black hover:text-yellow-400">
+          SYNAPSE_OS
         </button>
         <div className="hidden md:flex gap-4">
           {['SYS', 'MEM', 'RAD', 'HLP'].map((item) => (
-            <button key={item} className="win-text hover:text-yellow-600 uppercase font-black">{item}</button>
+            <button key={item} className="win-text hover:bg-black hover:text-pink-500 px-2 uppercase font-black transition-colors">{item}</button>
           ))}
         </div>
       </div>
       
       <div className="marquee-container hidden lg:block">
         <div className="marquee-text">
-          WELCOME TO VIRTUA_CORE v2.0 // SYSTEM STATUS: OPTIMAL // ENJOY THE RADICAL VIBES // NOSTALGIA OVERLOAD DETECTED // 
+          WELCOME TO SYNAPSE_OS v2.0 // NEURAL LINK ESTABLISHED // SYSTEM STATUS: RADICAL // MEMORY_VAULT_ACTIVE // 
         </div>
       </div>
 
@@ -103,11 +103,11 @@ const Taskbar = () => {
 };
 
 const DesktopIcon = ({ icon: Icon, label, color, onClick }) => (
-  <div className="desktop-icon group" onClick={onClick}>
-    <div className={`p-4 win-border bg-white group-hover:bg-yellow-400 transition-colors border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
+  <div className="desktop-icon group hover-glitch" onClick={onClick}>
+    <div className={`p-4 win-border bg-white group-hover:bg-yellow-400 group-hover:border-pink-500 transition-colors border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
       <Icon className="w-10 h-10" style={{ color: '#000' }} />
     </div>
-    <span className="win-text mt-2 px-2 bg-yellow-400 text-black font-black uppercase border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">{label}</span>
+    <span className="win-text mt-2 px-2 bg-yellow-400 text-black font-black uppercase border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:bg-pink-500 group-hover:text-white">{label}</span>
   </div>
 );
 
@@ -331,25 +331,25 @@ export default function App() {
                     </thead>
                     <tbody>
                       {filteredNotes.map(note => (
-                        <tr key={note.id} className="hover:bg-yellow-100 hover:translate-x-1 hover:-translate-y-1 transition-transform cursor-pointer group border-b-2 border-black bg-white" onClick={() => {
+                        <tr key={note.id} className="hover:bg-black hover:text-yellow-400 group border-b-2 border-black bg-white transition-colors cursor-pointer" onClick={() => {
                           setActiveNote(note);
                           setWindows(p => ({...p, editor: true}));
                         }}>
-                          <td className="p-3 border-r-2 border-black font-black text-black text-lg">{note.title}</td>
+                          <td className="p-3 border-r-2 border-black font-black text-lg">{note.title}</td>
                           <td className="p-3 border-r-2 border-black">
                             <div className="flex flex-wrap gap-2">
                               {note.tags.map((t, i) => (
-                                <span key={i} className="px-2 py-1 bg-pink-500 text-white border-2 border-black text-[10px] uppercase font-black">{t}</span>
+                                <span key={i} className="px-2 py-1 bg-pink-500 text-white border-2 border-black text-[10px] uppercase font-black group-hover:border-yellow-400">{t}</span>
                               ))}
                             </div>
                           </td>
-                          <td className="p-3 border-r-2 border-black text-gray-800 italic text-lg font-bold">{new Date(note.updatedAt).toLocaleDateString()}</td>
+                          <td className="p-3 border-r-2 border-black italic text-lg font-bold">{new Date(note.updatedAt).toLocaleDateString()}</td>
                           <td className="p-3 text-center">
                             <button 
-                              className="p-2 bg-red-500 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-600 active:shadow-none active:translate-x-0.5 active:translate-y-0.5"
+                              className="p-2 bg-red-500 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-white hover:text-red-500 active:shadow-none active:translate-x-0.5 active:translate-y-0.5"
                               onClick={(e) => { e.stopPropagation(); handleDelete(note.id); }}
                             >
-                              <Trash2 className="w-5 h-5 text-white" />
+                              <Trash2 className="w-5 h-5" />
                             </button>
                           </td>
                         </tr>
@@ -379,7 +379,7 @@ export default function App() {
                 <input 
                   type="text" 
                   required
-                  className="w-full win-input px-3 py-2 text-xl outline-none font-black"
+                  className="w-full win-input px-3 py-2 text-xl outline-none font-black focus:border-pink-500 focus:shadow-[0_0_15px_rgba(236,72,153,0.5)] transition-all"
                   value={activeNote.title}
                   onChange={(e) => setActiveNote({...activeNote, title: e.target.value})}
                 />
@@ -389,7 +389,7 @@ export default function App() {
                 <label className="text-sm font-black uppercase text-black">METADATA_TAGS</label>
                 <input 
                   type="text" 
-                  className="w-full win-input px-3 py-2 text-xl outline-none font-black"
+                  className="w-full win-input px-3 py-2 text-xl outline-none font-black focus:border-pink-500 focus:shadow-[0_0_15px_rgba(236,72,153,0.5)] transition-all"
                   placeholder="tag1, tag2..."
                   value={Array.isArray(activeNote.tags) ? activeNote.tags.join(', ') : activeNote.tags}
                   onChange={(e) => setActiveNote({...activeNote, tags: e.target.value})}
@@ -400,7 +400,7 @@ export default function App() {
                 <label className="text-sm font-black uppercase text-black">DATA_CONTENT</label>
                 <textarea 
                   required
-                  className="flex-1 w-full win-input p-3 text-xl outline-none resize-none font-bold italic"
+                  className="flex-1 w-full win-input p-3 text-xl outline-none resize-none font-bold italic focus:border-pink-500 focus:shadow-[0_0_15px_rgba(236,72,153,0.5)] transition-all"
                   value={activeNote.body}
                   onChange={(e) => setActiveNote({...activeNote, body: e.target.value})}
                 />
@@ -409,13 +409,13 @@ export default function App() {
               <div className="flex gap-4 pt-2">
                 <button 
                   type="submit" 
-                  className="flex-1 win-button bg-yellow-400 font-black text-xs uppercase flex items-center justify-center gap-3 p-4"
+                  className="flex-1 win-button bg-yellow-400 font-black text-xs uppercase flex items-center justify-center gap-3 p-4 hover:bg-black hover:text-yellow-400"
                 >
                   <Save className="w-5 h-5" /> EXECUTE_SAVE.SH
                 </button>
                 <button 
                   type="button"
-                  className="win-button px-6 text-xs font-black bg-white"
+                  className="win-button px-6 text-xs font-black bg-white hover:bg-black hover:text-white"
                   onClick={() => setWindows(p => ({...p, editor: false}))}
                 >
                   ABORT
