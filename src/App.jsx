@@ -15,7 +15,7 @@ import {
   Save
 } from 'lucide-react';
 
-const Window = ({ title, children, onClose, onMinimize, className, width = 400, height = 300, icon: Icon, zIndex = 10 }) => (
+const Window = ({ title, children, onClose, onMinimize, className, contentClassName = "bg-white", width = 400, height = 300, icon: Icon, zIndex = 10 }) => (
   <motion.div 
     drag
     dragMomentum={false}
@@ -36,7 +36,7 @@ const Window = ({ title, children, onClose, onMinimize, className, width = 400, 
         <button className="win-control-btn win-control-close" onClick={onClose} aria-label="Close window"><X className="w-2.5 h-2.5" /></button>
       </div>
     </div>
-    <div className="flex-1 overflow-auto bg-white win-border-inset m-1 p-1">
+    <div className={`flex-1 overflow-auto win-border-inset m-1 p-1 ${contentClassName}`}>
       {children}
     </div>
   </motion.div>
@@ -169,9 +169,9 @@ export default function App() {
       {/* Asset Stickers */}
       <StaticSticker src="/hati.png" x="79%" y="18%" rotate={12} size={200} />
       <StaticSticker src="/kupu-kupu.png" x="17%" y="76%" rotate={-14} size={250} />
-      <StaticSticker src="/alien.png" x="90%" y="56%" rotate={-6} size={126} />
+      <StaticSticker src="/alien.png" x="60%" y="56%" rotate={20} size={180} />
       <StaticSticker src="/bintang.png" x="83%" y="84%" rotate={16} size={220} />
-      <StaticSticker src="/kaset.png" x="54%" y="90%" rotate={7} size={170} />
+      <StaticSticker src="/kaset.png" x="30%" y="30%" rotate={-10} size={170} />
 
       {/* Desktop Icons */}
       <div className="absolute top-12 left-4 grid grid-cols-1 gap-6 z-10">
@@ -327,24 +327,28 @@ export default function App() {
         )}
 
         {windows.winamp && (
-          <Window title="Winamp" icon={Music} width={280} height={180} onClose={() => setWindows(p => ({...p, winamp: false}))} className="bg-[#1a1a1a] right-8 bottom-8" zIndex={25}>
-            <div className="bg-[#2b2b2b] p-2 text-[#00ff00] font-mono text-[10px] space-y-2 h-full">
-              <div className="flex justify-between border-b border-[#00ff00]/20 pb-1">
-                <span>00:42</span>
-                <span>CYBER_CORE.MP3</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 h-1 bg-gray-700">
-                  <div className="w-1/3 h-full bg-[#00ff00]"></div>
+          <Window title="Winamp" icon={Music} width={280} height={180} onClose={() => setWindows(p => ({...p, winamp: false}))} className="right-8 bottom-8" contentClassName="bg-[#0c2268]" zIndex={25}>
+            <div className="p-2 text-cyan-300 font-mono text-[10px] space-y-2 h-full flex flex-col justify-between">
+              <div className="space-y-2">
+                <div className="flex justify-between border-b border-cyan-300/20 pb-1">
+                  <span>00:42</span>
+                  <span className="truncate ml-2">CYBER_CORE.MP3</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-1 bg-[#1768d1]/30">
+                    <div className="w-1/3 h-full bg-cyan-400 shadow-[0_0_5px_#22d3ee]"></div>
+                  </div>
                 </div>
               </div>
-              <div className="flex justify-center gap-2 pt-2">
-                <button className="win-button bg-gray-400 text-black"><Play className="w-3 h-3 fill-black" /></button>
-                <button className="win-button bg-gray-400 text-black"><Pause className="w-3 h-3" /></button>
-              </div>
-              <div className="flex justify-between text-[8px] uppercase font-bold text-yellow-500">
-                <span>*SHUFFLE</span>
-                <span>REPEAT*</span>
+              <div className="flex flex-col gap-3">
+                <div className="flex justify-center gap-4">
+                  <button className="win-button bg-[#c0c0c0] text-black w-8 h-8 flex items-center justify-center"><Play className="w-3.5 h-3.5 fill-black" /></button>
+                  <button className="win-button bg-[#c0c0c0] text-black w-8 h-8 flex items-center justify-center"><Pause className="w-3.5 h-3.5" /></button>
+                </div>
+                <div className="flex justify-between text-[8px] uppercase font-bold text-pink-400 tracking-wider">
+                  <span>*SHUFFLE</span>
+                  <span>REPEAT*</span>
+                </div>
               </div>
             </div>
           </Window>
