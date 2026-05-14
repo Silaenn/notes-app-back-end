@@ -15,13 +15,12 @@ export const useMusicPlayer = (audioSrc) => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    audio.volume = volume;
-
     const updateTime = () => setCurrentTime(audio.currentTime);
     const updateDuration = () => setDuration(audio.duration);
     const handleEnd = () => {
       audio.currentTime = 0;
-      audio.play();
+      audio.play().catch(err => console.error("Looping failed:", err));
+      setIsPlaying(true);
     };
 
     audio.addEventListener('timeupdate', updateTime);
@@ -33,6 +32,12 @@ export const useMusicPlayer = (audioSrc) => {
       audio.removeEventListener('loadedmetadata', updateDuration);
       audio.removeEventListener('ended', handleEnd);
     };
+  }, [audioSrc]); // Only re-attach if the source changes
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
   }, [volume]);
 
   const togglePlay = useCallback(() => {

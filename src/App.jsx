@@ -87,15 +87,15 @@ export default function App() {
       className="h-screen w-screen relative pb-10 overflow-hidden"
       onContextMenu={handleContextMenu}
     >
+      {/* Persisted Audio Element - Always rendered for hook stability */}
+      <audio ref={music.audioRef} src="/nexus.mp3" />
+
       {booting ? (
         <BootScreen onComplete={() => setBooting(false)} />
       ) : (
         <>
           <Taskbar />
 
-          {/* Persisted Audio Element */}
-          <audio ref={music.audioRef} src="/nexus.mp3" />
-          
           {/* Watermark background — large, subtle */}
           <StaticSticker src="/crt.png" x="50%" y="45%" rotate={0} size={520} opacity={0.8} />
 
