@@ -103,7 +103,7 @@ const NoteExplorer = ({
                     <td className="p-3 border-r border-gray-100 italic font-medium">
                       {new Date(note.updatedAt).toLocaleDateString()}
                     </td>
-                    <td className="p-3 text-center">
+                    <td className="p-3 text-center flex justify-center">
                       <button 
                         className="win-button p-1 bg-[#c0c0c0] text-black hover:bg-red-700 hover:text-white"
                         onClick={(e) => { 
