@@ -1,5 +1,5 @@
-import React from 'react';
-import { Search, Trash2, Folder as FolderIcon } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, Trash2, Folder as FolderIcon, AlertTriangle } from 'lucide-react';
 import Window from './Window';
 
 const NoteExplorer = ({ 
@@ -32,7 +32,7 @@ const NoteExplorer = ({
       onFocus={onFocus}
       isFocused={isFocused}
     >
-      <div className="flex h-full flex-col">
+      <div className="flex h-full flex-col relative">
         {/* Search Bar Area */}
         <div className="p-2 border-b border-black bg-[#c0c0c0] flex gap-2 items-stretch scanline-panel">
           <div className="relative flex-1">
@@ -53,7 +53,7 @@ const NoteExplorer = ({
           </button>
         </div>
         
-        <div className="flex-1 overflow-auto p-2 bg-white/80">
+        <div className="flex-1 overflow-auto overscroll-none p-2 bg-white/80">
           {loading ? (
             <div className="flex flex-col items-center justify-center h-full space-y-4">
               <div className="text-lg font-bold win-text">RETRIEVING_DATA...</div>
@@ -103,16 +103,18 @@ const NoteExplorer = ({
                     <td className="p-3 border-r border-gray-100 italic font-medium">
                       {new Date(note.updatedAt).toLocaleDateString()}
                     </td>
-                    <td className="p-3 text-center flex justify-center">
-                      <button 
-                        className="win-button p-1 bg-[#c0c0c0] text-black hover:bg-red-700 hover:text-white"
-                        onClick={(e) => { 
-                          e.stopPropagation(); 
-                          onDeleteNote(note.id); 
-                        }}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                    <td className="p-3">
+                      <div className="flex justify-center">
+                        <button 
+                          className="win-button p-1 bg-[#c0c0c0] text-black hover:bg-red-700 hover:text-white"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDeleteNote(note.id);
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

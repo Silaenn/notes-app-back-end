@@ -19,6 +19,8 @@ import { useMusicPlayer } from './hooks/use-music-player';
 import { useContextMenu } from './hooks/use-context-menu';
 import { useWindowManager } from './hooks/use-window-manager';
 import { useToast } from './hooks/use-toast';
+import { useModal } from './hooks/use-modal';
+import Modal from './components/Modal';
 
 /**
  * Main application orchestrator for CyberNote Y2K.
@@ -36,6 +38,7 @@ export default function App() {
   const { menuState, handleContextMenu, closeMenu } = useContextMenu();
   const { focusWindow, getZIndex } = useWindowManager();
   const { toasts, showToast, dismissToast } = useToast();
+  const { modalState, showModal, closeModal } = useModal();
 
   // Window Handlers
   const toggleWindow = (name, state) => {
@@ -70,6 +73,14 @@ export default function App() {
     } else if (result.error) {
       showToast({ type: 'error', message: result.error });
     }
+  };
+
+  const handleDeleteRequest = (id) => {
+    showModal({
+      title: 'Confirm Delete',
+      message: 'Delete this note permanently?',
+      onConfirm: () => handleDeleteNote(id),
+    });
   };
 
   const isTopWindow = (name) => {
@@ -129,7 +140,7 @@ export default function App() {
                 onSearchChange={setSearch}
                 onNoteClick={handleEditNote}
                 onNewNote={handleNewNote}
-                onDeleteNote={handleDeleteNote}
+                onDeleteNote={handleDeleteRequest}
                 onClose={() => toggleWindow('explorer', false)}
                 zIndex={getZIndex('explorer')}
                 onFocus={() => focusWindow('explorer')}
@@ -191,6 +202,15 @@ export default function App() {
       
       {/* Toast Notifications */}
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+
+      {/* Global Modal */}
+      <Modal 
+        isOpen={modalState.isOpen} 
+        title={modalState.title} 
+        message={modalState.message} 
+        onConfirm={modalState.onConfirm} 
+        onCancel={closeModal} 
+      />
     </div>
   );
 }

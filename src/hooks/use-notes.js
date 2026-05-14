@@ -66,8 +66,6 @@ export const useNotes = () => {
   };
 
   const deleteNote = async (id) => {
-    if (!window.confirm('Delete this note permanently?')) return { cancelled: true };
-
     try {
       const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.NOTES}/${id}`, { 
         method: 'DELETE' 
