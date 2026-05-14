@@ -9,6 +9,7 @@ import StaticSticker from './components/StaticSticker';
 import NoteExplorer from './components/NoteExplorer';
 import NoteEditor from './components/NoteEditor';
 import Winamp from './components/Winamp';
+import BootScreen from './components/BootScreen';
 
 // Hooks
 import { useNotes } from './hooks/use-notes';
@@ -19,6 +20,7 @@ import { useMusicPlayer } from './hooks/use-music-player';
  */
 export default function App() {
   // State Management
+  const [booting, setBooting] = useState(true);
   const [windows, setWindows] = useState({ explorer: true, editor: false, winamp: false });
   const [activeNote, setActiveNote] = useState(null);
   const [search, setSearch] = useState('');
@@ -58,75 +60,81 @@ export default function App() {
 
   return (
     <div className="h-screen w-screen relative pb-12 overflow-hidden">
-      <Taskbar />
+      {booting ? (
+        <BootScreen onComplete={() => setBooting(false)} />
+      ) : (
+        <>
+          <Taskbar />
 
-      {/* Persisted Audio Element */}
-      <audio ref={music.audioRef} src="/nexus.mp3" />
-      {/* Watermark background — large, very faint */}
-      <StaticSticker src="/crt.png"     x="50%" y="45%" rotate={0}   size={520} opacity={0.15} />
+          {/* Persisted Audio Element */}
+          <audio ref={music.audioRef} src="/nexus.mp3" />
+          {/* Watermark background — large, very faint */}
+          <StaticSticker src="/crt.png"     x="50%" y="45%" rotate={0}   size={520} opacity={0.15} />
 
-      {/* Desktop Icons */}
-      <div className="absolute top-8 left-8 grid grid-cols-1 gap-12 z-10">
-        <DesktopIcon 
-          icon={Folder} 
-          label="MY_NOTES" 
-          onClick={() => toggleWindow('explorer', true)} 
-        />
-        <DesktopIcon 
-          icon={FileText} 
-          label="NEW_NOTE" 
-          onClick={handleNewNote} 
-        />
-        <DesktopIcon 
-          icon={Music} 
-          label="WINAMP" 
-          onClick={() => toggleWindow('winamp', true)} 
-        />
-      </div>
+          {/* Desktop Icons */}
+          <div className="absolute top-8 left-8 grid grid-cols-1 gap-12 z-10">
+            <DesktopIcon 
+              icon={Folder} 
+              label="MY_NOTES" 
+              onClick={() => toggleWindow('explorer', true)} 
+            />
+            <DesktopIcon 
+              icon={FileText} 
+              label="NEW_NOTE" 
+              onClick={handleNewNote} 
+            />
+            <DesktopIcon 
+              icon={Music} 
+              label="WINAMP" 
+              onClick={() => toggleWindow('winamp', true)} 
+            />
+          </div>
 
-      <AnimatePresence>
-        {windows.explorer && (
-          <NoteExplorer 
-            key={"note-explorer"}
-            notes={notes}
-            loading={loading}
-            search={search}
-            onSearchChange={setSearch}
-            onNoteClick={handleEditNote}
-            onNewNote={handleNewNote}
-            onDeleteNote={handleDeleteNote}
-            onClose={() => toggleWindow('explorer', false)}
-          />
-        )}
+          <AnimatePresence>
+            {windows.explorer && (
+              <NoteExplorer 
+                key={"note-explorer"}
+                notes={notes}
+                loading={loading}
+                search={search}
+                onSearchChange={setSearch}
+                onNoteClick={handleEditNote}
+                onNewNote={handleNewNote}
+                onDeleteNote={handleDeleteNote}
+                onClose={() => toggleWindow('explorer', false)}
+              />
+            )}
 
-        {windows.editor && (
-          <NoteEditor 
-            key={"note-editor"}
-            activeNote={activeNote}
-            onNoteChange={setActiveNote}
-            onSave={handleSaveNote}
-            onClose={() => toggleWindow('editor', false)}
-          />
-        )}
+            {windows.editor && (
+              <NoteEditor 
+                key={"note-editor"}
+                activeNote={activeNote}
+                onNoteChange={setActiveNote}
+                onSave={handleSaveNote}
+                onClose={() => toggleWindow('editor', false)}
+              />
+            )}
 
-        {windows.winamp && (
-          <Winamp 
-            key={"winamp"}
-            isPlaying={music.isPlaying}
-            currentTime={music.currentTime}
-            duration={music.duration}
-            volume={music.volume}
-            onTogglePlay={music.togglePlay}
-            onStop={music.stop}
-            onSeek={music.seek}
-            onVolumeChange={music.changeVolume}
-            onClose={() => {
-              music.stop();
-              toggleWindow('winamp', false);
-            }}
-          />
-        )}
-      </AnimatePresence>
+            {windows.winamp && (
+              <Winamp 
+                key={"winamp"}
+                isPlaying={music.isPlaying}
+                currentTime={music.currentTime}
+                duration={music.duration}
+                volume={music.volume}
+                onTogglePlay={music.togglePlay}
+                onStop={music.stop}
+                onSeek={music.seek}
+                onVolumeChange={music.changeVolume}
+                onClose={() => {
+                  music.stop();
+                  toggleWindow('winamp', false);
+                }}
+              />
+            )}
+          </AnimatePresence>
+        </>
+      )}
       
       {/* CRT Overlay Effect */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-[100] bg-[length:100%_2px,3px_100%]"></div>
