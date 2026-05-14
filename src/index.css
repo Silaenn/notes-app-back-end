@@ -201,3 +201,33 @@
 .animate-progress-fill {
   animation: progress-fill 1.5s ease-in-out infinite alternate;
 }
+
+/* NoteEditor Refinement Classes */
+.scanline-input {
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.03) 0px,
+    rgba(0, 0, 0, 0.03) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+}
+
+.win-field-accent {
+  border-left: 3px solid rgba(6, 182, 212, 0.3);
+  padding-left: 12px;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.win-field-accent:focus-within {
+  border-left-color: #06B6D4;
+}
+
+@keyframes ready-pulse {
+  0%, 100% { box-shadow: 6px 6px 0px #000; }
+  50% { box-shadow: 6px 6px 0px #EC4899; }
+}
+
+.animate-ready-pulse {
+  animation: ready-pulse 2s ease-in-out infinite;
+}
