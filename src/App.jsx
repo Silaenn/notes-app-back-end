@@ -65,12 +65,6 @@ export default function App() {
       {/* Watermark background — large, very faint */}
       <StaticSticker src="/crt.png"     x="50%" y="45%" rotate={0}   size={520} opacity={0.15} />
 
-      {/* Corner composition */}
-      {/* <StaticSticker src="/star.png"   x="85%" y="12%" rotate={15}  size={210} opacity={0.15} />
-      <StaticSticker src="/heart.png"  x="88%" y="78%" rotate={-8}  size={230} opacity={0.15} />
-      <StaticSticker src="/alien.png"  x="18%" y="82%" rotate={-12} size={200} opacity={0.15} />
-      <StaticSticker src="/floppy.png" x="24%" y="14%" rotate={-18} size={175} opacity={0.15} /> */}
-
       {/* Desktop Icons */}
       <div className="absolute top-8 left-8 grid grid-cols-1 gap-12 z-10">
         <DesktopIcon 
