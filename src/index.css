@@ -6,10 +6,24 @@
   body {
     @apply h-screen w-screen overflow-hidden text-black;
     font-family: "VT323", monospace;
+    /* Layered Background Composition */
     background-color: #4B0082;
-    background-image: radial-gradient(#000 10%, transparent 10%);
-    background-size: 3px 3px;
+    background-image: 
+      /* Subtle Vignette for depth */
+      radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.45) 100%),
+      /* Diagonal Crosshatch Pattern */
+      linear-gradient(45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.05) 75%, rgba(0, 0, 0, 0.05)),
+      linear-gradient(-45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.05) 75%, rgba(0, 0, 0, 0.05)),
+      /* Original Dot Grid */
+      radial-gradient(#000 12%, transparent 12%);
+    background-size: 100% 100%, 8px 8px, 8px 8px, 4px 4px;
+    animation: crt-breathing 6s ease-in-out infinite;
   }
+}
+
+@keyframes crt-breathing {
+  0%, 100% { opacity: 1; filter: brightness(1) contrast(1); }
+  50% { opacity: 0.98; filter: brightness(1.05) contrast(1.02); }
 }
 
 @layer components {
