@@ -32,11 +32,11 @@ const Taskbar = () => {
 
   return (
     <div className="win-taskbar">
-      {/* Start Button & Menus */}
+      {/* Main Brand Button */}
       <div className="flex items-center gap-2">
-        <button className="win-button px-2 flex items-center gap-1 h-8 bg-[#c0c0c0]">
-          <div className="w-4 h-4 bg-gradient-to-br from-blue-400 to-blue-700 border border-black/30" />
-          <span className="font-bold text-sm" style={{ fontVariant: 'small-caps' }}>Start</span>
+        <button className="win-button px-2 flex items-center gap-1.5 h-8 bg-[#c0c0c0]">
+          <div className="w-4 h-4 bg-gradient-to-br from-[#000080] to-[#004d4d] border border-black/30" />
+          <span className="font-bold text-xs" style={{ fontVariant: 'small-caps' }}>CyberNote</span>
         </button>
         
         <div className="hidden md:flex gap-1 border-l border-white/30 ml-2 pl-2">
