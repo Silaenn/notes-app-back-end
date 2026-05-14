@@ -7,10 +7,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        'y2k-purple': 'oklch(70% 0.25 320)',
-        'y2k-cyan': 'oklch(80% 0.2 190)',
-        'y2k-pink': 'oklch(75% 0.3 350)',
-        'y2k-bg': 'oklch(15% 0.05 280)',
+        'win-bg': '#008080', // Classic Teal
+        'win-silver': '#c0c0c0',
+        'win-grey': '#808080',
+        'win-navy': '#000080',
+        'win-blue': '#0000ff',
+        'win-accent': '#ff00ff', // Magenta accent
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

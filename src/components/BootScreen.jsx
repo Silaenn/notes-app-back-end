@@ -12,16 +12,16 @@ const BootScreen = ({ onComplete }) => {
   const [flash, setFlash] = useState(false);
 
   const biosLines = [
-    "SYNAPSE_OS BIOS v2.0.0",
-    "Copyright (C) 2000 CYBER_CORP Inc.",
+    "CyberNote System BIOS v1.2.4",
+    "Copyright (C) 1998 RetroSystems Inc.",
     "─────────────────────────────────────",
-    "CPU: NEURAL_PROC X1 @ 999MHz ... OK",
-    "RAM: 640K ... EXTENDED TO 999MB ... OK",
-    "GPU: CYBER_VGA ULTRA ... OK",
-    "HDD: MEMORY_VAULT_DRIVE ... OK",
-    "AUDIO: CYBER_WAVE_ENGINE ... OK",
+    "CPU: Pentium II @ 333MHz ... OK",
+    "Memory: 64MB ... OK",
+    "Primary Master: 4.3GB HDD ... OK",
+    "Secondary Master: CD-ROM ... OK",
+    "Video: 4MB AGP ... OK",
     "─────────────────────────────────────",
-    "Initializing SYNAPSE_OS..."
+    "Starting system..."
   ];
 
   // Phase 1: BIOS POST Screen
@@ -93,11 +93,8 @@ const BootScreen = ({ onComplete }) => {
       onAnimationComplete={() => {
         if (phase === 'fadeout') onComplete();
       }}
-      className="fixed inset-0 z-[9999] bg-black text-[#00ff00] font-['VT323'] overflow-hidden select-none"
+      className="fixed inset-0 z-[9999] bg-black text-white font-['VT323'] overflow-hidden select-none"
     >
-      {/* Scanline Effect Layer */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.08] bg-[repeating-linear-gradient(rgba(0,0,0,0)_0px,rgba(0,0,0,0)_2px,rgba(255,255,255,0.1)_2px,rgba(255,255,255,0.1)_4px)] z-10" />
-
       {/* BIOS Screen Content */}
       {(phase === 'bios' || phase === 'loading') && (
         <div className="max-w-[600px] mx-auto pt-[15vh] px-4">
@@ -107,18 +104,14 @@ const BootScreen = ({ onComplete }) => {
           
           {phase === 'loading' && (
             <div className="mt-8 space-y-2">
-              <div className="text-[#06B6D4] text-lg">LOADING_KERNEL.SYS</div>
-              <div className="w-full h-6 border-2 border-[#00ff00] bg-black relative">
+              <div className="text-gray-400 text-lg">Loading modules...</div>
+              <div className="w-full h-4 win-border-inset bg-black relative">
                 <div 
-                  className="h-full bg-gradient-to-r from-[#00ff00] via-[#06B6D4] to-[#EC4899] overflow-hidden transition-all duration-200"
+                  className="h-full bg-white transition-all duration-200"
                   style={{ width: `${progress}%` }}
-                >
-                  <div className="h-full w-[200%] flex animate-block-scroll whitespace-nowrap text-[10px] items-center px-1 opacity-50">
-                    ████░░░░████░░░░████░░░░████░░░░████░░░░████░░░░████░░░░████░░░░████░░░░████░░░░████░░░░████░░░░████░░░░
-                  </div>
-                </div>
+                />
               </div>
-              <div className="text-right text-[#00ff00]">{progress.toString().padStart(3, '0')}%</div>
+              <div className="text-right text-sm">{progress}%</div>
             </div>
           )}
         </div>
@@ -126,24 +119,17 @@ const BootScreen = ({ onComplete }) => {
 
       {/* Ready / Logo Screen */}
       {(phase === 'ready' || phase === 'prompt') && (
-        <div className="h-full flex flex-col items-center justify-center space-y-4">
-          <div 
-            className="font-['Press_Start_2P'] text-3xl"
-            style={{ 
-              background: 'linear-gradient(90deg, #EC4899, #06B6D4)', 
-              WebkitBackgroundClip: 'text', 
-              WebkitTextFillColor: 'transparent' 
-            }}
-          >
-            SYNAPSE_OS
+        <div className="h-full flex flex-col items-center justify-center space-y-4 bg-[#000080]">
+          <div className="text-white text-4xl font-bold italic tracking-tighter">
+            CyberNote<span className="text-gray-400">Y2K</span>
           </div>
-          <div className="text-[#06B6D4] text-xl flex items-center gap-2">
-            NEURAL_LINK_ESTABLISHED <span className="w-3 h-6 bg-[#06B6D4] animate-blink" />
+          <div className="text-white/60 text-lg flex items-center gap-2">
+            System Initialized <span className="w-2 h-5 bg-white animate-blink" />
           </div>
           
           {phase === 'prompt' && (
-            <div className="pt-16 font-['Press_Start_2P'] text-[10px] text-yellow-400 animate-pulse">
-              [ PRESS ANY KEY TO CONTINUE ]
+            <div className="pt-16 font-mono text-[10px] text-white animate-pulse">
+              [ CLICK OR PRESS ANY KEY TO START ]
             </div>
           )}
         </div>

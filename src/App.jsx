@@ -56,7 +56,7 @@ export default function App() {
   const handleSaveNote = async () => {
     const result = await saveNote(activeNote);
     if (result.success) {
-      showToast({ type: 'success', message: 'NOTE_WRITTEN_TO_VAULT' });
+      showToast({ type: 'success', message: 'Note saved successfully' });
       toggleWindow('editor', false);
     } else {
       showToast({ type: 'error', message: result.error });
@@ -66,7 +66,7 @@ export default function App() {
   const handleDeleteNote = async (id) => {
     const result = await deleteNote(id);
     if (result.success) {
-      showToast({ type: 'warning', message: 'FILE_DELETED_FROM_VAULT' });
+      showToast({ type: 'warning', message: 'Note deleted' });
     } else if (result.error) {
       showToast({ type: 'error', message: result.error });
     }
@@ -84,7 +84,7 @@ export default function App() {
 
   return (
     <div 
-      className="h-screen w-screen relative pb-12 overflow-hidden"
+      className="h-screen w-screen relative pb-10 overflow-hidden"
       onContextMenu={handleContextMenu}
     >
       {booting ? (
@@ -95,29 +95,31 @@ export default function App() {
 
           {/* Persisted Audio Element */}
           <audio ref={music.audioRef} src="/nexus.mp3" />
-          {/* Watermark background — large, very faint */}
-          <StaticSticker src="/crt.png"     x="50%" y="45%" rotate={0}   size={520} opacity={0.15} />
+          
+          {/* Watermark background — large, subtle */}
+          <StaticSticker src="/crt.png" x="50%" y="45%" rotate={0} size={520} opacity={0.8} />
 
           {/* Desktop Icons */}
           <div className="absolute top-8 left-8 grid grid-cols-1 gap-12 z-10">
             <DesktopIcon 
               icon={Folder} 
-              label="MY_NOTES" 
+              label="My Notes" 
               onClick={() => toggleWindow('explorer', true)} 
             />
             <DesktopIcon 
               icon={FileText} 
-              label="NEW_NOTE" 
+              label="New Note" 
               onClick={handleNewNote} 
             />
             <DesktopIcon 
               icon={Music} 
-              label="WINAMP" 
+              label="Winamp" 
               onClick={() => toggleWindow('winamp', true)} 
             />
           </div>
 
           <AnimatePresence>
+            {/* Windows... (kept same as before) */}
             {windows.explorer && (
               <NoteExplorer 
                 key={"note-explorer"}
@@ -185,7 +187,7 @@ export default function App() {
       )}
       
       {/* CRT Overlay Effect */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-[100] bg-[length:100%_2px,3px_100%]"></div>
+      <div className="crt-overlay"></div>
       
       {/* Toast Notifications */}
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
