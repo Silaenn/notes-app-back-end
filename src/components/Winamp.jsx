@@ -2,7 +2,6 @@ import React from 'react';
 import { Music, Play, Pause, Square, Volume2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Window from './Window';
-import { UI_CONFIG } from '../constants/config';
 
 const Winamp = ({ 
   isPlaying, 
@@ -13,7 +12,10 @@ const Winamp = ({
   onStop, 
   onSeek, 
   onVolumeChange, 
-  onClose 
+  onClose,
+  zIndex,
+  onFocus,
+  isFocused
 }) => {
   const formatMusicTime = (time) => {
     const mins = Math.floor(time / 60);
@@ -30,7 +32,9 @@ const Winamp = ({
       onClose={onClose} 
       className="right-8 bottom-20" 
       contentClassName="bg-[#1a1a1a]" 
-      zIndex={UI_CONFIG.WINDOW_Z_INDEX.WINAMP}
+      zIndex={zIndex}
+      onFocus={onFocus}
+      isFocused={isFocused}
     >
       <div className="p-0 flex flex-col h-full select-none no-drag">
         {/* Main Display Area */}

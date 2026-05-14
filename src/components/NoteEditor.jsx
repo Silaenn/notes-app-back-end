@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Save } from 'lucide-react';
 import Window from './Window';
-import { UI_CONFIG } from '../constants/config';
 
-const NoteEditor = ({ activeNote, onNoteChange, onSave, onClose }) => {
+const NoteEditor = ({ 
+  activeNote, 
+  onNoteChange, 
+  onSave, 
+  onClose,
+  zIndex,
+  onFocus,
+  isFocused
+}) => {
   const [charCount, setCharCount] = useState(0);
 
   useEffect(() => {
@@ -40,7 +47,9 @@ const NoteEditor = ({ activeNote, onNoteChange, onSave, onClose }) => {
       height={600} 
       onClose={onClose}
       className="left-1/2 top-10 -translate-x-1/2"
-      zIndex={UI_CONFIG.WINDOW_Z_INDEX.EDITOR}
+      zIndex={zIndex}
+      onFocus={onFocus}
+      isFocused={isFocused}
     >
       <form onSubmit={handleSubmit} className="flex flex-col h-full p-6 space-y-6">
         {/* File Name Section */}

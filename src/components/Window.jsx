@@ -5,6 +5,7 @@ import { X, Minus, Square } from 'lucide-react';
 /**
  * Reusable Window component with Y2K aesthetic.
  * Supports dragging, maximizing, and custom sizing.
+ * Includes dynamic focus management.
  */
 const Window = ({ 
   title, 
@@ -16,11 +17,12 @@ const Window = ({
   width = 400, 
   height = 300, 
   icon: Icon, 
-  zIndex = 10 
+  zIndex = 10,
+  onFocus,
+  isFocused = false
 }) => {
   const controls = useDragControls();
   const [isMaximized, setIsMaximized] = useState(false);
-  const [isActive, setIsActive] = useState(false);
 
   const toggleMaximize = () => setIsMaximized(!isMaximized);
 
@@ -40,13 +42,12 @@ const Window = ({
       exit={{ scale: 0.9, opacity: 0 }}
       style={{ zIndex }}
       className={`win-border absolute flex flex-col ${className}`}
-      onPointerDown={() => setIsActive(true)}
-      onPointerUp={() => setIsActive(false)}
+      onPointerDown={() => onFocus?.()}
     >
       <div 
-        className={`win-title-bar drag-handle cursor-default transition-all ${!isActive ? 'opacity-80 grayscale-[30%]' : ''}`}
+        className={`win-title-bar drag-handle cursor-default transition-all ${!isFocused ? 'opacity-70 saturate-50' : ''}`}
         onPointerDown={(e) => {
-          setIsActive(true);
+          onFocus?.();
           controls.start(e);
         }}
       >
@@ -63,14 +64,14 @@ const Window = ({
             <Minus className="w-3 h-3 font-bold" />
           </button>
           <button 
-            className="win-control-btn win-control-max" 
+            className="win-control-btn win-control-btn-max win-control-max" 
             onClick={toggleMaximize} 
             aria-label="Maximize window"
           >
             <Square className="w-3 h-3 font-bold" />
           </button>
           <button 
-            className="win-control-btn win-control-close" 
+            className="win-control-btn win-control-btn-close win-control-close" 
             onClick={onClose} 
             aria-label="Close window"
           >

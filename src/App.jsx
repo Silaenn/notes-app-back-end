@@ -16,6 +16,7 @@ import ContextMenu from './components/ContextMenu';
 import { useNotes } from './hooks/use-notes';
 import { useMusicPlayer } from './hooks/use-music-player';
 import { useContextMenu } from './hooks/use-context-menu';
+import { useWindowManager } from './hooks/use-window-manager';
 
 /**
  * Main application orchestrator for CyberNote Y2K.
@@ -31,9 +32,13 @@ export default function App() {
   const { notes, loading, saveNote, deleteNote } = useNotes();
   const music = useMusicPlayer('/nexus.mp3');
   const { menuState, handleContextMenu, closeMenu } = useContextMenu();
+  const { focusWindow, getZIndex } = useWindowManager();
 
   // Window Handlers
-  const toggleWindow = (name, state) => setWindows(prev => ({ ...prev, [name]: state }));
+  const toggleWindow = (name, state) => {
+    setWindows(prev => ({ ...prev, [name]: state }));
+    if (state) focusWindow(name);
+  };
 
   const handleNewNote = () => {
     setActiveNote({ title: '', body: '', tags: [] });
@@ -59,6 +64,16 @@ export default function App() {
     if (result.error) {
       alert(`Error: ${result.error}`);
     }
+  };
+
+  const isTopWindow = (name) => {
+    const windowNames = ['explorer', 'editor', 'winamp'];
+    const activeZIndices = windowNames
+      .filter(w => windows[w])
+      .map(w => getZIndex(w));
+    
+    if (activeZIndices.length === 0) return false;
+    return getZIndex(name) === Math.max(...activeZIndices);
   };
 
   return (
@@ -108,6 +123,9 @@ export default function App() {
                 onNewNote={handleNewNote}
                 onDeleteNote={handleDeleteNote}
                 onClose={() => toggleWindow('explorer', false)}
+                zIndex={getZIndex('explorer')}
+                onFocus={() => focusWindow('explorer')}
+                isFocused={isTopWindow('explorer')}
               />
             )}
 
@@ -118,6 +136,9 @@ export default function App() {
                 onNoteChange={setActiveNote}
                 onSave={handleSaveNote}
                 onClose={() => toggleWindow('editor', false)}
+                zIndex={getZIndex('editor')}
+                onFocus={() => focusWindow('editor')}
+                isFocused={isTopWindow('editor')}
               />
             )}
 
@@ -136,6 +157,9 @@ export default function App() {
                   music.stop();
                   toggleWindow('winamp', false);
                 }}
+                zIndex={getZIndex('winamp')}
+                onFocus={() => focusWindow('winamp')}
+                isFocused={isTopWindow('winamp')}
               />
             )}
 
