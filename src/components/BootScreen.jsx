@@ -89,51 +89,86 @@ const BootScreen = ({ onComplete }) => {
     <motion.div
       initial={{ opacity: 1 }}
       animate={phase === 'fadeout' ? { opacity: 0 } : { opacity: 1 }}
-      transition={{ duration: 0.6 }}
+      transition={{ duration: 0.8 }}
       onAnimationComplete={() => {
         if (phase === 'fadeout') onComplete();
       }}
       className="fixed inset-0 z-[9999] bg-black text-white font-['VT323'] overflow-hidden select-none"
     >
-      {/* BIOS Screen Content */}
-      {(phase === 'bios' || phase === 'loading') && (
-        <div className="max-w-[600px] mx-auto pt-[15vh] px-4">
-          {lines.map((line, i) => (
-            <div key={i} className="leading-tight text-xl tracking-wide">{line}</div>
-          ))}
-          
-          {phase === 'loading' && (
-            <div className="mt-8 space-y-2">
-              <div className="text-gray-400 text-lg">Loading modules...</div>
-              <div className="w-full h-4 win-border-inset bg-black relative">
-                <div 
-                  className="h-full bg-white transition-all duration-200"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-              <div className="text-right text-sm">{progress}%</div>
-            </div>
-          )}
-        </div>
-      )}
+      <AnimatePresence mode="wait">
+        {/* BIOS Screen Content */}
+        {(phase === 'bios' || phase === 'loading') && (
+          <motion.div 
+            key="bios-screen"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-[600px] mx-auto pt-[15vh] px-4"
+          >
+            {lines.map((line, i) => (
+              <div key={i} className="leading-tight text-xl tracking-wide">{line}</div>
+            ))}
+            
+            {phase === 'loading' && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-8 space-y-2"
+              >
+                <div className="text-gray-400 text-lg">Loading modules...</div>
+                <div className="w-full h-4 win-border-inset bg-black relative">
+                  <div 
+                    className="h-full bg-white transition-all duration-200"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+                <div className="text-right text-sm">{progress}%</div>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
 
-      {/* Ready / Logo Screen */}
-      {(phase === 'ready' || phase === 'prompt') && (
-        <div className="h-full flex flex-col items-center justify-center space-y-4 bg-[#000080]">
-          <div className="text-white text-4xl font-bold italic tracking-tighter">
-            CyberNote<span className="text-gray-400">Y2K</span>
-          </div>
-          <div className="text-white/60 text-lg flex items-center gap-2">
-            System Initialized <span className="w-2 h-5 bg-white animate-blink" />
-          </div>
-          
-          {phase === 'prompt' && (
-            <div className="pt-16 font-mono text-[10px] text-white animate-pulse">
-              [ CLICK OR PRESS ANY KEY TO START ]
-            </div>
-          )}
-        </div>
-      )}
+        {/* Ready / Logo Screen */}
+        {(phase === 'ready' || phase === 'prompt') && (
+          <motion.div 
+            key="ready-screen"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            className="h-full flex flex-col items-center justify-center space-y-2 bg-[#000080]"
+          >
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.8 }}
+              className="text-white text-5xl font-bold italic tracking-tighter"
+            >
+              CyberNote<span className="text-gray-400">Y2K</span>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8, duration: 0.5 }}
+              className="text-white/60 text-lg flex items-center gap-2"
+            >
+              System Initialized <span className="w-2 h-5 bg-white animate-blink" />
+            </motion.div>
+            
+            {phase === 'prompt' && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="pt-6 font-mono text-[10px] text-white animate-pulse"
+              >
+                [ CLICK OR PRESS ANY KEY TO START ]
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* White Flash Transition Overlay */}
       <AnimatePresence>
