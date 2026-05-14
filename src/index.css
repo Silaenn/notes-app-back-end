@@ -72,8 +72,12 @@
   }
 
   .win-control-btn {
-    @apply w-6 h-6 border-2 border-black flex items-center justify-center bg-white text-black;
-    box-shadow: 2px 2px 0 #000;
+    @apply w-7 h-7 border-2 border-black flex items-center justify-center text-white transition-all active:translate-x-[1px] active:translate-y-[1px];
+    box-shadow: inset 1px 1px 0px rgba(255, 255, 255, 0.8), inset -1px -1px 0px rgba(0, 0, 0, 0.4);
+  }
+
+  .win-control-btn:active {
+    box-shadow: inset -1px -1px 0px rgba(255, 255, 255, 0.8), inset 1px 1px 0px rgba(0, 0, 0, 0.4);
   }
 
   .win-control-min {

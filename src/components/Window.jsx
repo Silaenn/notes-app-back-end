@@ -20,6 +20,7 @@ const Window = ({
 }) => {
   const controls = useDragControls();
   const [isMaximized, setIsMaximized] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
   const toggleMaximize = () => setIsMaximized(!isMaximized);
 
@@ -39,10 +40,15 @@ const Window = ({
       exit={{ scale: 0.9, opacity: 0 }}
       style={{ zIndex }}
       className={`win-border absolute flex flex-col ${className}`}
+      onPointerDown={() => setIsActive(true)}
+      onPointerUp={() => setIsActive(false)}
     >
       <div 
-        className="win-title-bar drag-handle cursor-default"
-        onPointerDown={(e) => controls.start(e)}
+        className={`win-title-bar drag-handle cursor-default transition-all ${!isActive ? 'opacity-80 grayscale-[30%]' : ''}`}
+        onPointerDown={(e) => {
+          setIsActive(true);
+          controls.start(e);
+        }}
       >
         <div className="flex items-center gap-2 pointer-events-none">
           {Icon && <Icon className="w-3.5 h-3.5" />}
@@ -54,26 +60,26 @@ const Window = ({
             onClick={onMinimize} 
             aria-label="Minimize window"
           >
-            <Minus className="w-3 h-3" />
+            <Minus className="w-3 h-3 font-bold" />
           </button>
           <button 
             className="win-control-btn win-control-max" 
             onClick={toggleMaximize} 
             aria-label="Maximize window"
           >
-            <Square className="w-3 h-3" />
+            <Square className="w-3 h-3 font-bold" />
           </button>
           <button 
             className="win-control-btn win-control-close" 
             onClick={onClose} 
             aria-label="Close window"
           >
-            <X className="w-3 h-3" />
+            <X className="w-3 h-3 font-bold" />
           </button>
         </div>
       </div>
       <div 
-        className={`flex-1 overflow-auto win-border-inset m-1 p-1 ${contentClassName}`}
+        className={`flex-1 overflow-auto win-border-inset m-1 p-1 border-t border-white/60 ${contentClassName}`}
       >
         {children}
       </div>
