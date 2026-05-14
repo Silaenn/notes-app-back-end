@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion, useDragControls } from 'framer-motion';
+import { motion, useDragControls, useMotionValue } from 'framer-motion';
 import { X, Minus, Square } from 'lucide-react';
 
 /**
@@ -24,6 +24,8 @@ const Window = ({
   isFocused = false
 }) => {
   const controls = useDragControls();
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
   const [isMaximized, setIsMaximized] = useState(false);
   const [viewport, setViewport] = useState(() => ({
     width: window.innerWidth,
@@ -69,6 +71,13 @@ const Window = ({
   const compactLeft = horizontalPadding + Math.max(0, Math.floor((compactAvailableWidth - targetWidth) / 2));
   const compactTop = topPadding + Math.max(0, Math.floor((compactAvailableHeight - targetHeight) / 2));
 
+  useEffect(() => {
+    if (isCompactMode) {
+      x.set(0);
+      y.set(0);
+    }
+  }, [isCompactMode, x, y]);
+
   return (
     <motion.div 
       drag={!isCompactMode}
@@ -84,6 +93,8 @@ const Window = ({
       }}
       exit={{ scale: 0.9, opacity: 0 }}
       style={{
+        x,
+        y,
         zIndex,
         top: isCompactMode ? compactTop : undefined,
         left: isCompactMode ? compactLeft : undefined,
