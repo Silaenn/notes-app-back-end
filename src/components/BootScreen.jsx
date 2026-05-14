@@ -104,10 +104,10 @@ const BootScreen = ({ onComplete }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="max-w-[600px] mx-auto pt-[15vh] px-4"
+            className="h-full max-w-[min(92vw,600px)] mx-auto px-3 sm:px-4 flex flex-col justify-center"
           >
             {lines.map((line, i) => (
-              <div key={i} className="leading-tight text-xl tracking-wide">{line}</div>
+              <div key={i} className="leading-tight text-sm sm:text-lg md:text-xl tracking-wide whitespace-pre-wrap break-words">{line}</div>
             ))}
             
             {phase === 'loading' && (
@@ -116,14 +116,14 @@ const BootScreen = ({ onComplete }) => {
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-8 space-y-2"
               >
-                <div className="text-gray-400 text-lg">Loading modules...</div>
-                <div className="w-full h-4 win-border-inset bg-black relative">
+                <div className="text-gray-400 text-sm sm:text-base md:text-lg">Loading modules...</div>
+                <div className="w-full h-3 sm:h-4 win-border-inset bg-black relative">
                   <div 
                     className="h-full bg-white transition-all duration-200"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
-                <div className="text-right text-sm">{progress}%</div>
+                <div className="text-center text-xs sm:text-sm">{progress}%</div>
               </motion.div>
             )}
           </motion.div>
@@ -143,7 +143,7 @@ const BootScreen = ({ onComplete }) => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.8 }}
-              className="text-white text-5xl font-bold italic tracking-tighter"
+              className="text-white text-3xl sm:text-4xl md:text-5xl font-bold italic tracking-tighter text-center px-4"
             >
               CyberNote<span className="text-gray-400">Y2K</span>
             </motion.div>
@@ -152,7 +152,7 @@ const BootScreen = ({ onComplete }) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8, duration: 0.5 }}
-              className="text-white/60 text-lg flex items-center gap-2"
+              className="text-white/60 text-sm sm:text-base md:text-lg flex items-center gap-2 text-center px-4"
             >
               System Initialized <span className="w-2 h-5 bg-white animate-blink" />
             </motion.div>
@@ -161,7 +161,7 @@ const BootScreen = ({ onComplete }) => {
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="pt-6 font-mono text-[10px] text-white animate-pulse"
+                className="pt-6 font-mono text-[9px] sm:text-[10px] text-white animate-pulse text-center px-4"
               >
                 [ CLICK OR PRESS ANY KEY TO START ]
               </motion.div>
