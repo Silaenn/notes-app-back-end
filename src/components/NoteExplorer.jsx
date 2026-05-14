@@ -96,15 +96,15 @@ const NoteExplorer = ({
                         const useTwoColumns = tags.length > 1 && tags.every((tag) => String(tag).length <= 7);
 
                         return (
-                          <div className={`grid gap-1 md:gap-2 ${useTwoColumns ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                          <div className={`grid gap-1 md:gap-2 ${useTwoColumns ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
                             {tags.map((t, i) => (
                               <span
                                 key={i}
                                 className={`
-                                  px-2 py-0.5 bg-[#808080] text-white border border-black text-[10px] md:text-[11px] uppercase font-bold text-center
+                                  block w-full px-2 py-0.5 bg-[#808080] text-white border border-black text-[10px] md:text-[11px] uppercase font-bold text-center
                                   whitespace-nowrap overflow-hidden text-ellipsis leading-tight
                                   group-hover:bg-white group-hover:text-[#000080]
-                                  ${useTwoColumns && tags.length % 2 === 1 && i === tags.length - 1 ? 'col-span-2' : ''}
+                                  ${useTwoColumns && tags.length % 2 === 1 && i === tags.length - 1 ? 'md:col-span-2' : ''}
                                 `}
                                 title={t}
                               >
