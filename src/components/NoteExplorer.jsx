@@ -102,7 +102,7 @@ const NoteExplorer = ({
                         {note.tags.map((t, i) => (
                           <span 
                             key={i} 
-                            className="px-2 py-1 bg-pink-500 text-white border-2 border-black text-[10px] uppercase font-black group-hover:border-yellow-400 group-hover:text-yellow-400"
+                            className="px-2 py-1 bg-pink-500 text-white border-2 border-black text-[15px] uppercase font-black group-hover:border-yellow-400 group-hover:text-yellow-400"
                           >
                             {t}
                           </span>
@@ -113,21 +113,15 @@ const NoteExplorer = ({
                       {new Date(note.updatedAt).toLocaleDateString()}
                     </td>
                     <td className="p-3 text-center">
-                      <div className="relative group/btn inline-block">
-                        {/* Tooltip */}
-                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white px-2 py-1 text-[8px] font-['Press_Start_2P'] hidden group-hover/btn:block z-20 pointer-events-none border border-white">
-                          DEL
-                        </div>
-                        <button 
-                          className="p-2 bg-red-500 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-white hover:text-red-500 active:shadow-none active:translate-x-0.5 active:translate-y-0.5"
-                          onClick={(e) => { 
-                            e.stopPropagation(); 
-                            onDeleteNote(note.id); 
-                          }}
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                      </div>
+                      <button 
+                        className="p-2 bg-red-500 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-white hover:text-red-500 active:shadow-none active:translate-x-0.5 active:translate-y-0.5"
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          onDeleteNote(note.id); 
+                        }}
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
                     </td>
                   </tr>
                 ))}

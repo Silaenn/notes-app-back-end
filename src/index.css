@@ -218,6 +218,11 @@
   animation: block-scroll 1s linear infinite;
 }
 
+@keyframes winamp-scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
 /* NoteEditor Refinement Classes */
 .scanline-input {
   background-image: repeating-linear-gradient(

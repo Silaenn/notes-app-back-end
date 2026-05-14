@@ -11,12 +11,14 @@ import NoteEditor from './components/NoteEditor';
 import Winamp from './components/Winamp';
 import BootScreen from './components/BootScreen';
 import ContextMenu from './components/ContextMenu';
+import { ToastContainer } from './components/Toast';
 
 // Hooks
 import { useNotes } from './hooks/use-notes';
 import { useMusicPlayer } from './hooks/use-music-player';
 import { useContextMenu } from './hooks/use-context-menu';
 import { useWindowManager } from './hooks/use-window-manager';
+import { useToast } from './hooks/use-toast';
 
 /**
  * Main application orchestrator for CyberNote Y2K.
@@ -33,6 +35,7 @@ export default function App() {
   const music = useMusicPlayer('/nexus.mp3');
   const { menuState, handleContextMenu, closeMenu } = useContextMenu();
   const { focusWindow, getZIndex } = useWindowManager();
+  const { toasts, showToast, dismissToast } = useToast();
 
   // Window Handlers
   const toggleWindow = (name, state) => {
@@ -53,16 +56,19 @@ export default function App() {
   const handleSaveNote = async () => {
     const result = await saveNote(activeNote);
     if (result.success) {
+      showToast({ type: 'success', message: 'NOTE_WRITTEN_TO_VAULT' });
       toggleWindow('editor', false);
     } else {
-      alert(`Error: ${result.error}`);
+      showToast({ type: 'error', message: result.error });
     }
   };
 
   const handleDeleteNote = async (id) => {
     const result = await deleteNote(id);
-    if (result.error) {
-      alert(`Error: ${result.error}`);
+    if (result.success) {
+      showToast({ type: 'warning', message: 'FILE_DELETED_FROM_VAULT' });
+    } else if (result.error) {
+      showToast({ type: 'error', message: result.error });
     }
   };
 
@@ -180,6 +186,9 @@ export default function App() {
       
       {/* CRT Overlay Effect */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-[100] bg-[length:100%_2px,3px_100%]"></div>
+      
+      {/* Toast Notifications */}
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
     </div>
   );
 }
