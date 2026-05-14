@@ -1,127 +1,113 @@
-import { nanoid } from "nanoid";
-import notes from "./notes.js";
+import { noteService } from "./note-service.js";
+import { STATUS_CODES } from "./constants.js";
 
-export const addNoteHandler = (request, h) => {
-  const { title, tags, body } = request.payload;
-
-  const id = nanoid(16);
-  const createdAt = new Date().toISOString();
-  const updatedAt = createdAt;
-
-  const newNote = {
-    title,
-    tags,
-    body,
-    id,
-    createdAt,
-    updatedAt,
-  };
-
-  notes.push(newNote);
-
-  const isSuccess = notes.filter((note) => note.id === id).length > 0;
-
-  if (isSuccess) {
-    const response = h.response({
-      status: "success",
-      message: "Catatan berhasil ditambahkan",
-      data: {
-        noteId: id,
-      },
-    });
-    response.code(201);
-    return response;
-  }
-
-  const response = h.response({
-    status: "fail",
-    message: "Catatan gagal ditambahkan",
-  });
-  response.code(500);
-  return response;
+/**
+ * Standard error response generator.
+ */
+const createErrorResponse = (h, message, statusCode) => {
+  return h.response({
+    error: true,
+    message,
+    statusCode,
+  }).code(statusCode);
 };
 
-export const getAllNotesHandler = () => ({
-  status: "success",
-  data: {
-    notes,
-  },
-});
+export const addNoteHandler = async (request, h) => {
+  try {
+    const { title, tags, body } = request.payload;
 
-export const getNoteByIdHandler = (request, h) => {
-  const { id } = request.params;
+    // Simple input validation
+    if (!title || !body) {
+      return createErrorResponse(h, "Title and body are required", STATUS_CODES.BAD_REQUEST);
+    }
 
-  const note = notes.filter((n) => n.id === id)[0];
+    const noteId = await noteService.addNote({ title, tags, body });
 
-  if (note !== undefined) {
+    return h.response({
+      status: "success",
+      message: "Note successfully added",
+      data: {
+        noteId,
+      },
+    }).code(STATUS_CODES.CREATED);
+  } catch (error) {
+    return createErrorResponse(h, "Failed to add note", STATUS_CODES.INTERNAL_SERVER_ERROR);
+  }
+};
+
+export const getAllNotesHandler = async (request, h) => {
+  try {
+    const notes = await noteService.getAllNotes();
+    return {
+      status: "success",
+      data: {
+        notes,
+      },
+    };
+  } catch (error) {
+    return createErrorResponse(h, "Failed to retrieve notes", STATUS_CODES.INTERNAL_SERVER_ERROR);
+  }
+};
+
+export const getNoteByIdHandler = async (request, h) => {
+  try {
+    const { id } = request.params;
+    const note = await noteService.getNoteById(id);
+
+    if (!note) {
+      return createErrorResponse(h, "Note not found", STATUS_CODES.NOT_FOUND);
+    }
+
     return {
       status: "success",
       data: {
         note,
       },
     };
+  } catch (error) {
+    return createErrorResponse(h, "Failed to retrieve note", STATUS_CODES.INTERNAL_SERVER_ERROR);
   }
-
-  const response = h.response({
-    status: "fail",
-    message: "Catatan tidak ditemukan",
-  });
-  response.code(404);
-  return response;
 };
 
-export const editNoteByIdHandler = (request, h) => {
-  const { id } = request.params;
+export const editNoteByIdHandler = async (request, h) => {
+  try {
+    const { id } = request.params;
+    const { title, tags, body } = request.payload;
 
-  const { title, tags, body } = request.payload;
-  const updatedAt = new Date().toISOString();
+    // Simple input validation
+    if (!title || !body) {
+      return createErrorResponse(h, "Title and body are required", STATUS_CODES.BAD_REQUEST);
+    }
 
-  const index = notes.findIndex((note) => note.id === id);
+    const isSuccess = await noteService.editNoteById(id, { title, tags, body });
 
-  if (index !== -1) {
-    notes[index] = {
-      ...notes[index],
-      title,
-      tags,
-      body,
-      updatedAt,
+    if (!isSuccess) {
+      return createErrorResponse(h, "Failed to update note. ID not found", STATUS_CODES.NOT_FOUND);
+    }
+
+    return {
+      status: "success",
+      message: "Note successfully updated",
     };
-
-    const response = h.response({
-      status: "success",
-      message: "Catatan berhasil diperbarui",
-    });
-    response.code(200);
-    return response;
+  } catch (error) {
+    return createErrorResponse(h, "An error occurred while updating the note", STATUS_CODES.INTERNAL_SERVER_ERROR);
   }
-
-  const response = h.response({
-    status: "fail",
-    message: "Gagal memperbarui catatan. Id tidak ditemukan",
-  });
-  response.code(404);
-  return response;
 };
 
-export const deleteNoteByIdHandler = (request, h) => {
-  const { id } = request.params;
+export const deleteNoteByIdHandler = async (request, h) => {
+  try {
+    const { id } = request.params;
+    const isSuccess = await noteService.deleteNoteById(id);
 
-  const index = notes.findIndex((note) => note.id === id);
+    if (!isSuccess) {
+      return createErrorResponse(h, "Failed to delete note. ID not found", STATUS_CODES.NOT_FOUND);
+    }
 
-  if (index !== -1) {
-    notes.splice(index, 1);
-    const response = h.response({
+    return {
       status: "success",
-      message: "Catatan berhasil dihapus",
-    });
-    response.code(200);
-    return response;
+      message: "Note successfully deleted",
+    };
+  } catch (error) {
+    return createErrorResponse(h, "An error occurred while deleting the note", STATUS_CODES.INTERNAL_SERVER_ERROR);
   }
-
-  const response = h.response({
-    status: "fail",
-    message: "Catatan gagal dihapus. Id tidak ditemukan",
-  });
-  response.code(404);
-  return response;
 };
