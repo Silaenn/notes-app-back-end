@@ -29,8 +29,10 @@ const Winamp = ({
       icon={Music} 
       width={320} 
       height={240} 
+      compactWidth={360}
+      compactHeight={250}
       onClose={onClose} 
-      className="right-8 bottom-20" 
+      className="md:right-8 md:bottom-20 md:left-auto md:top-auto" 
       contentClassName="bg-[#1a1a1a]" 
       zIndex={zIndex}
       onFocus={onFocus}
@@ -38,12 +40,12 @@ const Winamp = ({
     >
       <div className="p-0 flex flex-col h-full select-none no-drag">
         {/* Main Display Area */}
-        <div className="bg-black m-1 p-2 border-2 border-[#333] flex gap-3 h-24">
+        <div className="bg-black m-1 p-2 border-2 border-[#333] flex gap-2 md:gap-3 h-20 md:h-24">
           <div className="flex-1 flex flex-col justify-between">
             <div className="flex justify-between items-start">
               <div className="flex flex-col">
                 <span className="text-[7px] text-gray-500 font-bold uppercase leading-none mb-1">STEREOPHONIC</span>
-                <span className="text-[#00ff00] font-mono text-[10px] truncate w-32">nexus.mp3</span>
+                <span className="text-[#00ff00] font-mono text-[9px] md:text-[10px] truncate w-24 md:w-32">nexus.mp3</span>
               </div>
               <div className="text-right flex flex-col items-end">
                 <span className="text-[7px] text-gray-500 font-bold uppercase leading-none">kbps/khz</span>
@@ -63,9 +65,9 @@ const Winamp = ({
             </div>
           </div>
 
-          <div className="w-20 bg-[#001100] border border-[#003300] flex flex-col items-center justify-center p-1 rounded-sm">
+          <div className="w-16 md:w-20 bg-[#001100] border border-[#003300] flex flex-col items-center justify-center p-1 rounded-sm">
             <span className="text-[7px] text-[#00ff00]/40 font-bold uppercase leading-none mb-1">TIME</span>
-            <div className="text-xl font-mono text-[#00ff00] leading-none tracking-tighter">
+            <div className="text-lg md:text-xl font-mono text-[#00ff00] leading-none tracking-tighter">
               {formatMusicTime(currentTime)}
             </div>
             <div className="w-full mt-1 h-0.5 bg-[#002200]">
@@ -92,10 +94,10 @@ const Winamp = ({
 
           <div className="flex justify-between items-center px-1">
             <div className="flex gap-1">
-              <button onClick={onTogglePlay} className="win-button w-8 h-8 flex items-center justify-center">
+              <button onClick={onTogglePlay} className="win-button w-7 h-7 md:w-8 md:h-8 flex items-center justify-center">
                 {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
               </button>
-              <button onClick={onStop} className="win-button w-8 h-8 flex items-center justify-center">
+              <button onClick={onStop} className="win-button w-7 h-7 md:w-8 md:h-8 flex items-center justify-center">
                 <Square className="w-3 h-3" />
               </button>
             </div>
@@ -103,7 +105,7 @@ const Winamp = ({
             <div className="flex flex-col gap-1 items-end">
               <div className="flex items-center gap-2">
                 <Volume2 className="w-3 h-3 text-black" />
-                <div className="w-20 h-3 bg-black border border-[#555] relative overflow-hidden">
+                <div className="w-16 md:w-20 h-3 bg-black border border-[#555] relative overflow-hidden">
                   <input 
                     type="range"
                     min="0"
