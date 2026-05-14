@@ -436,7 +436,7 @@ export default function App() {
               handleStop();
               setWindows(p => ({...p, winamp: false}));
             }} 
-            className="right-8 bottom-8" 
+            className="right-8 bottom-20" 
             contentClassName="bg-[#1a1a1a]" 
             zIndex={25}
           >
