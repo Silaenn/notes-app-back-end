@@ -10,10 +10,12 @@ import NoteExplorer from './components/NoteExplorer';
 import NoteEditor from './components/NoteEditor';
 import Winamp from './components/Winamp';
 import BootScreen from './components/BootScreen';
+import ContextMenu from './components/ContextMenu';
 
 // Hooks
 import { useNotes } from './hooks/use-notes';
 import { useMusicPlayer } from './hooks/use-music-player';
+import { useContextMenu } from './hooks/use-context-menu';
 
 /**
  * Main application orchestrator for CyberNote Y2K.
@@ -28,6 +30,7 @@ export default function App() {
   // Custom Hooks
   const { notes, loading, saveNote, deleteNote } = useNotes();
   const music = useMusicPlayer('/nexus.mp3');
+  const { menuState, handleContextMenu, closeMenu } = useContextMenu();
 
   // Window Handlers
   const toggleWindow = (name, state) => setWindows(prev => ({ ...prev, [name]: state }));
@@ -59,7 +62,10 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen w-screen relative pb-12 overflow-hidden">
+    <div 
+      className="h-screen w-screen relative pb-12 overflow-hidden"
+      onContextMenu={handleContextMenu}
+    >
       {booting ? (
         <BootScreen onComplete={() => setBooting(false)} />
       ) : (
@@ -130,6 +136,18 @@ export default function App() {
                   music.stop();
                   toggleWindow('winamp', false);
                 }}
+              />
+            )}
+
+            {menuState.visible && (
+              <ContextMenu
+                key="context-menu"
+                x={menuState.x}
+                y={menuState.y}
+                onClose={closeMenu}
+                onNewNote={() => { handleNewNote(); closeMenu(); }}
+                onOpenWinamp={() => { toggleWindow('winamp', true); closeMenu(); }}
+                noteCount={notes.length}
               />
             )}
           </AnimatePresence>
