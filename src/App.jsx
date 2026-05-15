@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { FileText, Folder, Music } from 'lucide-react';
 
 // Components
@@ -132,7 +132,12 @@ export default function App() {
       {booting ? (
         <BootScreen onComplete={() => setBooting(false)} />
       ) : (
-        <>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.2, ease: "easeInOut" }}
+          className="h-full w-full"
+        >
           <Taskbar windows={windows} onRestore={handleRestore} isTopWindow={isTopWindow} />
 
           {/* Watermark background — large, subtle */}
@@ -225,7 +230,7 @@ export default function App() {
               />
             )}
           </AnimatePresence>
-        </>
+        </motion.div>
       )}
       
       {/* CRT Overlay Effect */}
