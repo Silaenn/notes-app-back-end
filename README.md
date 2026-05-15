@@ -2,7 +2,8 @@
 
 **CyberNote Y2K** adalah aplikasi manajemen catatan (*note-taking*) dengan estetika retro-futuristik tahun 2000-an (Y2K). Aplikasi ini mensimulasikan pengalaman menggunakan sistem operasi klasik lengkap dengan sistem manajemen jendela, taskbar, dan pemutar musik terintegrasi.
 
-![CyberNote Preview](public/crt.png) *(Ganti dengan screenshot asli jika ada)*
+<img width="1920" height="964" alt="CYBER_NOTE_Y2K" src="https://github.com/user-attachments/assets/d5aa32d6-781b-4124-a907-016895723c23" />
+<br>
 
 ## ✨ Fitur Utama
 
