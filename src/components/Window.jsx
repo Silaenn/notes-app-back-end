@@ -18,6 +18,7 @@ const Window = ({
   height = 300, 
   compactWidth,
   compactHeight,
+  allowFullScreenMobile = true,
   icon: Icon, 
   zIndex = 10,
   onFocus,
@@ -46,9 +47,11 @@ const Window = ({
 
   const toggleMaximize = () => setIsMaximized(!isMaximized);
   const isCompactMode = viewport.width < 768;
-  const horizontalPadding = isCompactMode ? 8 : 16;
-  const topPadding = isCompactMode ? 8 : 16;
-  const bottomPadding = isCompactMode ? 56 : 32;
+  const isMobile = viewport.width < 500 && allowFullScreenMobile;
+  
+  const horizontalPadding = isMobile ? 0 : (isCompactMode ? 8 : 16);
+  const topPadding = isMobile ? 0 : (isCompactMode ? 8 : 16);
+  const bottomPadding = isMobile ? 40 : (isCompactMode ? 56 : 32);
 
   const maxWidth = Math.max(280, viewport.width - horizontalPadding * 2);
   const maxHeight = Math.max(220, viewport.height - topPadding - bottomPadding);
@@ -56,8 +59,10 @@ const Window = ({
   const preferredHeight = Math.min(height, maxHeight);
   const compactPreferredWidth = compactWidth ?? Math.floor(viewport.width * 0.86);
   const compactPreferredHeight = compactHeight ?? Math.floor(viewport.height * 0.72);
-  const compactTargetWidth = Math.min(maxWidth, Math.max(280, compactPreferredWidth));
-  const compactTargetHeight = Math.min(maxHeight, Math.max(220, compactPreferredHeight));
+  
+  const compactTargetWidth = isMobile ? viewport.width : Math.min(maxWidth, Math.max(280, compactPreferredWidth));
+  const compactTargetHeight = isMobile ? (viewport.height - bottomPadding) : Math.min(maxHeight, Math.max(220, compactPreferredHeight));
+  
   const desktopMaxWidth = Math.min(maxWidth, Math.floor(width * 1.2));
   const desktopMaxHeight = Math.min(maxHeight, Math.floor(height * 1.2));
   const targetWidth = isCompactMode
@@ -68,8 +73,8 @@ const Window = ({
     : (isMaximized ? desktopMaxHeight : preferredHeight);
   const compactAvailableWidth = viewport.width - horizontalPadding * 2;
   const compactAvailableHeight = viewport.height - topPadding - bottomPadding;
-  const compactLeft = horizontalPadding + Math.max(0, Math.floor((compactAvailableWidth - targetWidth) / 2));
-  const compactTop = topPadding + Math.max(0, Math.floor((compactAvailableHeight - targetHeight) / 2));
+  const compactLeft = isMobile ? 0 : (horizontalPadding + Math.max(0, Math.floor((compactAvailableWidth - targetWidth) / 2)));
+  const compactTop = isMobile ? 0 : (topPadding + Math.max(0, Math.floor((compactAvailableHeight - targetHeight) / 2)));
 
   useEffect(() => {
     if (isCompactMode) {
@@ -77,6 +82,9 @@ const Window = ({
       y.set(0);
     }
   }, [isCompactMode, x, y]);
+
+  const controlIconClass = isCompactMode ? "w-4 h-4" : "w-3 h-3";
+  const controlBtnClass = isCompactMode ? "p-2" : "p-1";
 
   return (
     <motion.div 
@@ -104,11 +112,11 @@ const Window = ({
         top: isCompactMode ? compactTop : undefined,
         left: isCompactMode ? compactLeft : undefined,
       }}
-      className={`win-border absolute flex flex-col ${className}`}
+      className={`win-border absolute flex flex-col ${isMobile ? 'border-none shadow-none' : ''} ${className}`}
       onPointerDown={() => onFocus?.()}
     >
       <div 
-        className={`win-title-bar drag-handle cursor-default transition-all ${!isFocused ? 'opacity-70 saturate-50' : ''}`}
+        className={`win-title-bar drag-handle cursor-default transition-all ${!isFocused ? 'opacity-70 saturate-50' : ''} ${isMobile ? 'm-0' : 'm-0.5'}`}
         onPointerDown={(e) => {
           onFocus?.();
           if (!isCompactMode) {
@@ -117,36 +125,36 @@ const Window = ({
         }}
       >
         <div className="flex items-center gap-2 pointer-events-none">
-          {Icon && <Icon className="w-3.5 h-3.5" />}
-          <span className="win-text truncate">{title}</span>
+          {Icon && <Icon className={isCompactMode ? "w-4 h-4" : "w-3.5 h-3.5"} />}
+          <span className={`win-text truncate ${isCompactMode ? 'text-base' : 'text-sm'}`}>{title}</span>
         </div>
         <div className="flex gap-1.5">
           <button 
-            className="win-control-btn win-control-min" 
+            className={`win-control-btn win-control-min ${controlBtnClass}`} 
             onClick={onMinimize} 
             aria-label="Minimize window"
           >
-            <Minus className="w-3 h-3 font-bold" />
+            <Minus className={`${controlIconClass} font-bold`} />
           </button>
           <button 
-            className={`win-control-btn win-control-btn-max win-control-max ${isCompactMode ? 'opacity-60 cursor-not-allowed' : ''}`}
+            className={`win-control-btn win-control-btn-max win-control-max ${controlBtnClass} ${isCompactMode ? 'opacity-60 cursor-not-allowed' : ''}`}
             onClick={toggleMaximize} 
             aria-label="Maximize window"
             disabled={isCompactMode}
           >
-            <Square className="w-3 h-3 font-bold" />
+            <Square className={`${controlIconClass} font-bold`} />
           </button>
           <button 
-            className="win-control-btn win-control-btn-close win-control-close" 
+            className={`win-control-btn win-control-btn-close win-control-close ${controlBtnClass}`} 
             onClick={onClose} 
             aria-label="Close window"
           >
-            <X className="w-3 h-3 font-bold" />
+            <X className={`${controlIconClass} font-bold`} />
           </button>
         </div>
       </div>
       <div 
-        className={`flex-1 overflow-auto win-border-inset m-1 p-1 border-t border-white/60 ${contentClassName}`}
+        className={`flex-1 overflow-auto win-border-inset p-1 border-t border-white/60 ${contentClassName} ${isMobile ? 'm-0' : 'm-1'}`}
       >
         {children}
       </div>

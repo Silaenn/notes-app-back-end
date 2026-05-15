@@ -32,6 +32,7 @@ const Winamp = ({
       height={240} 
       compactWidth={360}
       compactHeight={250}
+      allowFullScreenMobile={false}
       onClose={onClose} 
       onMinimize={onMinimize}
       className="md:right-8 md:bottom-20 md:left-auto md:top-auto" 
