@@ -132,105 +132,106 @@ export default function App() {
       {booting ? (
         <BootScreen onComplete={() => setBooting(false)} />
       ) : (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, ease: "easeInOut" }}
-          className="h-full w-full"
-        >
-          <Taskbar windows={windows} onRestore={handleRestore} isTopWindow={isTopWindow} />
-
+        <div className="h-full w-full">
           {/* Watermark background — large, subtle */}
           <StaticSticker src="/crt.png" x="50%" y="45%" rotate={0} size={520} opacity={0.8} />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
+            className="h-full w-full"
+          >
+            <Taskbar windows={windows} onRestore={handleRestore} isTopWindow={isTopWindow} />
 
-          {/* Desktop Icons */}
-          <div className="absolute top-8 left-8 grid grid-cols-1 gap-12 z-10">
-            <DesktopIcon 
-              icon={Folder} 
-              label="My Notes" 
-              onClick={() => toggleWindow('explorer', true)} 
-            />
-            <DesktopIcon 
-              icon={FileText} 
-              label="New Note" 
-              onClick={handleNewNote} 
-            />
-            <DesktopIcon 
-              icon={Music} 
-              label="Winamp" 
-              onClick={() => toggleWindow('winamp', true)} 
-            />
-          </div>
-
-          <AnimatePresence>
-            {/* Windows... (kept same as before) */}
-            {windows.explorer.isOpen && !windows.explorer.isMinimized && (
-              <NoteExplorer 
-                key={"note-explorer"}
-                notes={notes}
-                loading={loading}
-                search={search}
-                onSearchChange={setSearch}
-                onNoteClick={handleEditNote}
-                onNewNote={handleNewNote}
-                onDeleteNote={handleDeleteRequest}
-                onClose={() => toggleWindow('explorer', false)}
-                onMinimize={() => handleMinimize('explorer')}
-                zIndex={getZIndex('explorer')}
-                onFocus={() => focusWindow('explorer')}
-                isFocused={isTopWindow('explorer')}
+            {/* Desktop Icons */}
+            <div className="absolute top-8 left-8 grid grid-cols-1 gap-12 z-10">
+              <DesktopIcon 
+                icon={Folder} 
+                label="My Notes" 
+                onClick={() => toggleWindow('explorer', true)} 
               />
-            )}
-
-            {windows.editor.isOpen && !windows.editor.isMinimized && (
-              <NoteEditor 
-                key={"note-editor"}
-                activeNote={activeNote}
-                onNoteChange={setActiveNote}
-                onSave={handleSaveNote}
-                onClose={() => toggleWindow('editor', false)}
-                onMinimize={() => handleMinimize('editor')}
-                zIndex={getZIndex('editor')}
-                onFocus={() => focusWindow('editor')}
-                isFocused={isTopWindow('editor')}
+              <DesktopIcon 
+                icon={FileText} 
+                label="New Note" 
+                onClick={handleNewNote} 
               />
-            )}
-
-            {windows.winamp.isOpen && !windows.winamp.isMinimized && (
-              <Winamp 
-                key={"winamp"}
-                isPlaying={music.isPlaying}
-                currentTime={music.currentTime}
-                duration={music.duration}
-                volume={music.volume}
-                onTogglePlay={music.togglePlay}
-                onStop={music.stop}
-                onSeek={music.seek}
-                onVolumeChange={music.changeVolume}
-                onClose={() => {
-                  music.stop();
-                  toggleWindow('winamp', false);
-                }}
-                onMinimize={() => handleMinimize('winamp')}
-                zIndex={getZIndex('winamp')}
-                onFocus={() => focusWindow('winamp')}
-                isFocused={isTopWindow('winamp')}
+              <DesktopIcon 
+                icon={Music} 
+                label="Winamp" 
+                onClick={() => toggleWindow('winamp', true)} 
               />
-            )}
+            </div>
 
-            {menuState.visible && (
-              <ContextMenu
-                key="context-menu"
-                x={menuState.x}
-                y={menuState.y}
-                onClose={closeMenu}
-                onNewNote={() => { handleNewNote(); closeMenu(); }}
-                onOpenWinamp={() => { toggleWindow('winamp', true); closeMenu(); }}
-                noteCount={notes.length}
-              />
-            )}
-          </AnimatePresence>
-        </motion.div>
+            <AnimatePresence>
+              {/* Windows... (kept same as before) */}
+              {windows.explorer.isOpen && !windows.explorer.isMinimized && (
+                <NoteExplorer 
+                  key={"note-explorer"}
+                  notes={notes}
+                  loading={loading}
+                  search={search}
+                  onSearchChange={setSearch}
+                  onNoteClick={handleEditNote}
+                  onNewNote={handleNewNote}
+                  onDeleteNote={handleDeleteRequest}
+                  onClose={() => toggleWindow('explorer', false)}
+                  onMinimize={() => handleMinimize('explorer')}
+                  zIndex={getZIndex('explorer')}
+                  onFocus={() => focusWindow('explorer')}
+                  isFocused={isTopWindow('explorer')}
+                />
+              )}
+
+              {windows.editor.isOpen && !windows.editor.isMinimized && (
+                <NoteEditor 
+                  key={"note-editor"}
+                  activeNote={activeNote}
+                  onNoteChange={setActiveNote}
+                  onSave={handleSaveNote}
+                  onClose={() => toggleWindow('editor', false)}
+                  onMinimize={() => handleMinimize('editor')}
+                  zIndex={getZIndex('editor')}
+                  onFocus={() => focusWindow('editor')}
+                  isFocused={isTopWindow('editor')}
+                />
+              )}
+
+              {windows.winamp.isOpen && !windows.winamp.isMinimized && (
+                <Winamp 
+                  key={"winamp"}
+                  isPlaying={music.isPlaying}
+                  currentTime={music.currentTime}
+                  duration={music.duration}
+                  volume={music.volume}
+                  onTogglePlay={music.togglePlay}
+                  onStop={music.stop}
+                  onSeek={music.seek}
+                  onVolumeChange={music.changeVolume}
+                  onClose={() => {
+                    music.stop();
+                    toggleWindow('winamp', false);
+                  }}
+                  onMinimize={() => handleMinimize('winamp')}
+                  zIndex={getZIndex('winamp')}
+                  onFocus={() => focusWindow('winamp')}
+                  isFocused={isTopWindow('winamp')}
+                />
+              )}
+
+              {menuState.visible && (
+                <ContextMenu
+                  key="context-menu"
+                  x={menuState.x}
+                  y={menuState.y}
+                  onClose={closeMenu}
+                  onNewNote={() => { handleNewNote(); closeMenu(); }}
+                  onOpenWinamp={() => { toggleWindow('winamp', true); closeMenu(); }}
+                  noteCount={notes.length}
+                />
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </div>
       )}
       
       {/* CRT Overlay Effect */}
