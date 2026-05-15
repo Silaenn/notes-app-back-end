@@ -15,7 +15,7 @@ export const useNotes = () => {
       const { data, error: fetchError } = await supabase
         .from('notes')
         .select('*')
-        .order('updatedAt', { ascending: false });
+        .order('updated_at', { ascending: false });
 
       if (fetchError) throw fetchError;
 
@@ -40,7 +40,7 @@ export const useNotes = () => {
           ? note.tags.split(',').map(t => t.trim()).filter(Boolean) 
           : note.tags,
         body: note.body,
-        updatedAt: new Date().toISOString()
+        updated_at: new Date().toISOString()
       };
 
       let result;
@@ -54,7 +54,7 @@ export const useNotes = () => {
         // Insert
         result = await supabase
           .from('notes')
-          .insert([{ ...noteData, createdAt: new Date().toISOString() }]);
+          .insert([{ ...noteData, created_at: new Date().toISOString() }]);
       }
 
       if (result.error) throw result.error;
