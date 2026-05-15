@@ -84,7 +84,12 @@ const Window = ({
       dragMomentum={false}
       dragListener={false}
       dragControls={controls}
-      initial={{ scale: 0.9, opacity: 0 }}
+      initial={{ 
+        scale: 0.9, 
+        opacity: 0,
+        width: targetWidth,
+        height: targetHeight,
+      }}
       animate={{ 
         scale: 1, 
         opacity: 1,
