@@ -28,7 +28,11 @@ import Modal from './components/Modal';
 export default function App() {
   // State Management
   const [booting, setBooting] = useState(true);
-  const [windows, setWindows] = useState({ explorer: true, editor: false, winamp: false });
+  const [windows, setWindows] = useState({ 
+    explorer: { isOpen: true, isMinimized: false }, 
+    editor: { isOpen: false, isMinimized: false }, 
+    winamp: { isOpen: false, isMinimized: false } 
+  });
   const [activeNote, setActiveNote] = useState(null);
   const [search, setSearch] = useState('');
 
@@ -42,8 +46,32 @@ export default function App() {
 
   // Window Handlers
   const toggleWindow = (name, state) => {
-    setWindows(prev => ({ ...prev, [name]: state }));
+    setWindows(prev => ({ 
+      ...prev, 
+      [name]: { isOpen: state, isMinimized: false } 
+    }));
     if (state) focusWindow(name);
+  };
+
+  const handleMinimize = (name) => {
+    setWindows(prev => ({ 
+      ...prev, 
+      [name]: { ...prev[name], isMinimized: true } 
+    }));
+  };
+
+  const handleRestore = (name) => {
+    // If window is already open and not minimized, clicking it again might minimize it (standard taskbar behavior)
+    if (windows[name].isOpen && !windows[name].isMinimized && isTopWindow(name)) {
+      handleMinimize(name);
+      return;
+    }
+
+    setWindows(prev => ({ 
+      ...prev, 
+      [name]: { ...prev[name], isMinimized: false, isOpen: true } 
+    }));
+    focusWindow(name);
   };
 
   const handleNewNote = () => {
@@ -86,7 +114,7 @@ export default function App() {
   const isTopWindow = (name) => {
     const windowNames = ['explorer', 'editor', 'winamp'];
     const activeZIndices = windowNames
-      .filter(w => windows[w])
+      .filter(w => windows[w].isOpen && !windows[w].isMinimized)
       .map(w => getZIndex(w));
     
     if (activeZIndices.length === 0) return false;
@@ -105,7 +133,7 @@ export default function App() {
         <BootScreen onComplete={() => setBooting(false)} />
       ) : (
         <>
-          <Taskbar />
+          <Taskbar windows={windows} onRestore={handleRestore} isTopWindow={isTopWindow} />
 
           {/* Watermark background — large, subtle */}
           <StaticSticker src="/crt.png" x="50%" y="45%" rotate={0} size={520} opacity={0.8} />
@@ -131,7 +159,7 @@ export default function App() {
 
           <AnimatePresence>
             {/* Windows... (kept same as before) */}
-            {windows.explorer && (
+            {windows.explorer.isOpen && !windows.explorer.isMinimized && (
               <NoteExplorer 
                 key={"note-explorer"}
                 notes={notes}
@@ -142,26 +170,28 @@ export default function App() {
                 onNewNote={handleNewNote}
                 onDeleteNote={handleDeleteRequest}
                 onClose={() => toggleWindow('explorer', false)}
+                onMinimize={() => handleMinimize('explorer')}
                 zIndex={getZIndex('explorer')}
                 onFocus={() => focusWindow('explorer')}
                 isFocused={isTopWindow('explorer')}
               />
             )}
 
-            {windows.editor && (
+            {windows.editor.isOpen && !windows.editor.isMinimized && (
               <NoteEditor 
                 key={"note-editor"}
                 activeNote={activeNote}
                 onNoteChange={setActiveNote}
                 onSave={handleSaveNote}
                 onClose={() => toggleWindow('editor', false)}
+                onMinimize={() => handleMinimize('editor')}
                 zIndex={getZIndex('editor')}
                 onFocus={() => focusWindow('editor')}
                 isFocused={isTopWindow('editor')}
               />
             )}
 
-            {windows.winamp && (
+            {windows.winamp.isOpen && !windows.winamp.isMinimized && (
               <Winamp 
                 key={"winamp"}
                 isPlaying={music.isPlaying}
@@ -176,6 +206,7 @@ export default function App() {
                   music.stop();
                   toggleWindow('winamp', false);
                 }}
+                onMinimize={() => handleMinimize('winamp')}
                 zIndex={getZIndex('winamp')}
                 onFocus={() => focusWindow('winamp')}
                 isFocused={isTopWindow('winamp')}

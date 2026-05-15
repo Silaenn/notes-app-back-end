@@ -11,6 +11,7 @@ const NoteExplorer = ({
   onNewNote, 
   onDeleteNote, 
   onClose,
+  onMinimize,
   zIndex,
   onFocus,
   isFocused
@@ -29,6 +30,7 @@ const NoteExplorer = ({
       compactWidth={520}
       compactHeight={620}
       onClose={onClose}
+      onMinimize={onMinimize}
       className="md:left-40 md:top-16"
       zIndex={zIndex}
       onFocus={onFocus}

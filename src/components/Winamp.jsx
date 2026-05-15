@@ -13,6 +13,7 @@ const Winamp = ({
   onSeek, 
   onVolumeChange, 
   onClose,
+  onMinimize,
   zIndex,
   onFocus,
   isFocused
@@ -32,6 +33,7 @@ const Winamp = ({
       compactWidth={360}
       compactHeight={250}
       onClose={onClose} 
+      onMinimize={onMinimize}
       className="md:right-8 md:bottom-20 md:left-auto md:top-auto" 
       contentClassName="bg-[#1a1a1a]" 
       zIndex={zIndex}

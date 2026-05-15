@@ -7,6 +7,7 @@ const NoteEditor = ({
   onNoteChange, 
   onSave, 
   onClose,
+  onMinimize,
   zIndex,
   onFocus,
   isFocused
@@ -48,6 +49,7 @@ const NoteEditor = ({
       compactWidth={520}
       compactHeight={620}
       onClose={onClose}
+      onMinimize={onMinimize}
       className="md:left-1/2 md:top-10 md:-translate-x-1/2"
       zIndex={zIndex}
       onFocus={onFocus}
