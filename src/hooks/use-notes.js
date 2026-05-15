@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { API_CONFIG } from '../constants/config';
+import { supabase } from '../lib/supabase';
 
 /**
- * Custom hook for managing notes data and operations.
+ * Custom hook for managing notes data using Supabase.
  */
 export const useNotes = () => {
   const [notes, setNotes] = useState([]);
@@ -12,18 +12,17 @@ export const useNotes = () => {
   const fetchNotes = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.NOTES}`);
-      const result = await response.json();
+      const { data, error: fetchError } = await supabase
+        .from('notes')
+        .select('*')
+        .order('updatedAt', { ascending: false });
 
-      if (result.status === 'success') {
-        setNotes(result.data.notes);
-        setError(null);
-      } else {
-        throw new Error(result.message || 'Failed to fetch notes');
-      }
+      if (fetchError) throw fetchError;
+
+      setNotes(data || []);
+      setError(null);
     } catch (err) {
       setError(err.message);
-      // In a real app, we might use a toast notification here
     } finally {
       setLoading(false);
     }
@@ -34,32 +33,34 @@ export const useNotes = () => {
   }, [fetchNotes]);
 
   const saveNote = async (note) => {
-    const isNew = !note.id;
-    const url = isNew 
-      ? `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.NOTES}`
-      : `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.NOTES}/${note.id}`;
-    
-    const method = isNew ? 'POST' : 'PUT';
-
     try {
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: note.title,
-          tags: typeof note.tags === 'string' 
-            ? note.tags.split(',').map(t => t.trim()) 
-            : note.tags,
-          body: note.body
-        })
-      });
+      const noteData = {
+        title: note.title,
+        tags: typeof note.tags === 'string' 
+          ? note.tags.split(',').map(t => t.trim()).filter(Boolean) 
+          : note.tags,
+        body: note.body,
+        updatedAt: new Date().toISOString()
+      };
 
-      const result = await response.json();
-      if (result.status === 'success') {
-        await fetchNotes();
-        return { success: true };
+      let result;
+      if (note.id) {
+        // Update
+        result = await supabase
+          .from('notes')
+          .update(noteData)
+          .eq('id', note.id);
+      } else {
+        // Insert
+        result = await supabase
+          .from('notes')
+          .insert([{ ...noteData, createdAt: new Date().toISOString() }]);
       }
-      throw new Error(result.message || 'Failed to save note');
+
+      if (result.error) throw result.error;
+
+      await fetchNotes();
+      return { success: true };
     } catch (err) {
       return { success: false, error: err.message };
     }
@@ -67,16 +68,15 @@ export const useNotes = () => {
 
   const deleteNote = async (id) => {
     try {
-      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.NOTES}/${id}`, { 
-        method: 'DELETE' 
-      });
-      const result = await response.json();
+      const { error: deleteError } = await supabase
+        .from('notes')
+        .delete()
+        .eq('id', id);
 
-      if (result.status === 'success') {
-        await fetchNotes();
-        return { success: true };
-      }
-      throw new Error(result.message || 'Failed to delete note');
+      if (deleteError) throw deleteError;
+
+      await fetchNotes();
+      return { success: true };
     } catch (err) {
       return { success: false, error: err.message };
     }
