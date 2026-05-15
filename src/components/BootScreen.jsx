@@ -10,6 +10,29 @@ const BootScreen = ({ onComplete }) => {
   const [lines, setLines] = useState([]);
   const [progress, setProgress] = useState(0);
   const [flash, setFlash] = useState(false);
+  const [imagesPreloaded, setImagesPreloaded] = useState(false);
+
+  // Pre-load critical images during boot to prevent loading flashes on desktop
+  const preloadImages = useCallback(async () => {
+    const imagesToPreload = ['/crt.png'];
+    
+    const preloadImage = (src) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = resolve;
+        img.onerror = resolve; // Continue even if preload fails
+        img.src = src;
+      });
+    };
+
+    try {
+      await Promise.all(imagesToPreload.map(src => preloadImage(src)));
+      setImagesPreloaded(true);
+    } catch {
+      // Silently fail and mark as preloaded anyway
+      setImagesPreloaded(true);
+    }
+  }, []);
 
   const biosLines = [
     "CyberNote System BIOS v1.2.4",
@@ -55,14 +78,15 @@ const BootScreen = ({ onComplete }) => {
     return () => clearInterval(interval);
   }, [phase]);
 
-  // Phase 3: System Ready
+  // Phase 3: System Ready - Trigger image preload
   useEffect(() => {
     if (phase !== 'ready') return;
+    preloadImages(); // Start preloading images while showing ready screen
     const timer = setTimeout(() => {
       setPhase('prompt');
     }, 800);
     return () => clearTimeout(timer);
-  }, [phase]);
+  }, [phase, preloadImages]);
 
   // Phase 4: Press Any Key
   const handleProceed = useCallback(() => {
@@ -91,7 +115,7 @@ const BootScreen = ({ onComplete }) => {
       animate={phase === 'fadeout' ? { opacity: 0 } : { opacity: 1 }}
       transition={{ duration: 0.8 }}
       onAnimationComplete={() => {
-        if (phase === 'fadeout') onComplete();
+        if (phase === 'fadeout' && imagesPreloaded) onComplete();
       }}
       className="fixed inset-0 z-[9999] bg-black text-white font-['VT323'] overflow-hidden select-none"
     >
