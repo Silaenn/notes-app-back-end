@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
+import { apiClient } from '../lib/api-client';
 
 /**
- * Custom hook for managing notes data using Supabase.
+ * Custom hook for managing notes data using backend API.
  */
 export const useNotes = () => {
   const [notes, setNotes] = useState([]);
@@ -12,17 +12,12 @@ export const useNotes = () => {
   const fetchNotes = useCallback(async () => {
     setLoading(true);
     try {
-      const { data, error: fetchError } = await supabase
-        .from('notes')
-        .select('*')
-        .order('updated_at', { ascending: false });
-
-      if (fetchError) throw fetchError;
-
+      const data = await apiClient.fetchNotes();
       setNotes(data || []);
       setError(null);
     } catch (err) {
       setError(err.message);
+      setNotes([]);
     } finally {
       setLoading(false);
     }
@@ -39,25 +34,14 @@ export const useNotes = () => {
         tags: typeof note.tags === 'string' 
           ? note.tags.split(',').map(t => t.trim()).filter(Boolean) 
           : note.tags,
-        body: note.body,
-        updated_at: new Date().toISOString()
+        body: note.body
       };
 
-      let result;
       if (note.id) {
-        // Update
-        result = await supabase
-          .from('notes')
-          .update(noteData)
-          .eq('id', note.id);
+        await apiClient.updateNote(note.id, noteData);
       } else {
-        // Insert
-        result = await supabase
-          .from('notes')
-          .insert([{ ...noteData, created_at: new Date().toISOString() }]);
+        await apiClient.createNote(noteData);
       }
-
-      if (result.error) throw result.error;
 
       await fetchNotes();
       return { success: true };
@@ -68,13 +52,7 @@ export const useNotes = () => {
 
   const deleteNote = async (id) => {
     try {
-      const { error: deleteError } = await supabase
-        .from('notes')
-        .delete()
-        .eq('id', id);
-
-      if (deleteError) throw deleteError;
-
+      await apiClient.deleteNote(id);
       await fetchNotes();
       return { success: true };
     } catch (err) {

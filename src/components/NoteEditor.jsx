@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Save } from 'lucide-react';
+import { FileText, Save, Loader } from 'lucide-react';
 import Window from './Window';
 
 const NoteEditor = ({ 
@@ -13,6 +13,7 @@ const NoteEditor = ({
   isFocused
 }) => {
   const [charCount, setCharCount] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (activeNote?.body) {
@@ -24,9 +25,14 @@ const NoteEditor = ({
 
   if (!activeNote) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave();
+    setIsSaving(true);
+    try {
+      await onSave();
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const isReadyToSave = activeNote.title?.trim().length > 0 && activeNote.body?.trim().length > 0;
@@ -100,17 +106,26 @@ const NoteEditor = ({
         <div className="flex gap-2 md:gap-4 pt-2">
           <button 
             type="submit" 
-            disabled={!isReadyToSave}
+            disabled={!isReadyToSave || isSaving}
             className={`
               flex-1 win-button font-bold text-[10px] md:text-xs uppercase flex items-center justify-center gap-2 md:gap-3 p-3 md:p-4 
-              ${!isReadyToSave ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#000080] hover:text-white'}
+              ${!isReadyToSave || isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#000080] hover:text-white'}
             `}
           >
-            <Save className="w-4 h-4 md:w-5 md:h-5" /> SAVE_TO_MEMORY
+            {isSaving ? (
+              <>
+                <Loader className="w-4 h-4 md:w-5 md:h-5 animate-spin" /> SAVING...
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4 md:w-5 md:h-5" /> SAVE_TO_MEMORY
+              </>
+            )}
           </button>
           <button 
             type="button"
-            className="win-button px-4 md:px-6 text-[10px] md:text-xs font-bold hover:bg-red-800 hover:text-white"
+            disabled={isSaving}
+            className={`win-button px-4 md:px-6 text-[10px] md:text-xs font-bold ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-800 hover:text-white'}`}
             onClick={onClose}
           >
             ABORT
