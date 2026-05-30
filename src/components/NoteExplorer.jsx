@@ -118,7 +118,10 @@ const NoteExplorer = ({
                       })()}
                     </td>
                     <td className="p-2 md:p-3 border-r border-gray-100 italic font-medium">
-                      {new Date(note.updated_at).toLocaleDateString()}
+                      {(() => {
+                        const updated = note.updatedAt || note.updated_at;
+                        return updated ? new Date(updated).toLocaleDateString() : '—';
+                      })()}
                     </td>
                     <td className="p-2 md:p-3">
                       <div className="flex justify-center">
