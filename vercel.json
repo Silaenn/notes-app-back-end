@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/notes", "destination": "/api/notes" },
+    { "source": "/notes/:path*", "destination": "/api/notes/:path*" }
+  ]
+}
